@@ -1,8 +1,12 @@
 # Pyramid Pairs
 
-## How many players can play at once?
-1 player!
+## How many players?
+As many as you like -- just alternate who clicks the pyramids and record points for each player in a text editor.
 
 ## How do I play?
-Click a pyramid, memorize the image appearing on the bottom of the pyramid, and find the other pyramid that has the same image!
+* Open pyramid-pairs.html in a web browser.
+* Click a pyramid.
+* Memorize the image appearing on the bottom of the pyramid.
+* Find the other pyramid that has the same image to remove those pyramids.
+* Keep removing pyramids until all of the pyramids are gone.
 
