@@ -36,6 +36,8 @@ var renderer;
 
 var sun;
 
+var colorOfSand = 0xedc9af;
+
 initialize();
 
 draw();
@@ -72,11 +74,13 @@ function initialize()
 
 function draw()
 {
-	sun = new THREE.DirectionalLight( 0xffffff, 0.5 );
+	sun = new THREE.DirectionalLight( 0xffffff, 1 );
+	sun.position.x = -100;
+	sun.position.y = 100;
 	scene.add(sun);
 
-	var geometry = new THREE.CylinderGeometry(5, 5, 20, 32);
-	var material = new THREE.MeshBasicMaterial( {color: 0xff0000} );
+	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
+	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
 	var cylinder = new THREE.Mesh( geometry, material );
 	scene.add(cylinder);
 }
