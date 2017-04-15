@@ -40,11 +40,17 @@ var colorOfSand = 0xedc9af;
 
 var pyramid;
 
+var pyramidToRotate;
+
+var revealing;
+
+var rotationDelta = 0.025;
+
 initialize();
 
 draw();
 
-render();
+animate();
 
 function initialize()
 {
@@ -64,7 +70,7 @@ function initialize()
 
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	camera01.position.y = 50;
+	camera01.position.y = 30;
 	camera01.position.z = 100;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
@@ -81,23 +87,41 @@ function draw()
 	sun = new THREE.DirectionalLight( 0xffffff, 1 );
 	sun.position.x = -100;
 	sun.position.y = 100;
+	sun.position.z = 100;
 	scene.add(sun);
-
+	
 	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
 	pyramid = new THREE.Mesh( geometry, material );
 	scene.add(pyramid);
 }
 
+function animate()
+{
+	requestAnimationFrame(animate);
+
+	render();
+}
+
 function render()
 {
+	if (revealing && pyramid.rotation.x < (Math.PI * 1.375))
+	{
+		pyramid.rotation.x += rotationDelta;
+	}
+
+	else if (!revealing && pyramid.rotation.x > 0)
+	{
+		pyramid.rotation.x -= rotationDelta;
+	}
+
 	renderer.render(scene, cameraCurrent);
 }
 
 function onDocumentMouseDown(event)
 {
-	pyramid.rotation.x += Math.PI;
-	render();
+	pyramidToRotate = pyramid;
+	revealing = !revealing;
 }
 
 
