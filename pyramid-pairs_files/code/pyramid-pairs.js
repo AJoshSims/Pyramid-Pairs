@@ -38,6 +38,8 @@ var sun;
 
 var colorOfSand = 0xedc9af;
 
+var pyramid;
+
 initialize();
 
 draw();
@@ -70,6 +72,8 @@ function initialize()
 	renderer = new THREE.WebGLRenderer({alpha: true});
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
+
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 }
 
 function draw()
@@ -81,13 +85,19 @@ function draw()
 
 	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-	var cylinder = new THREE.Mesh( geometry, material );
-	scene.add(cylinder);
+	pyramid = new THREE.Mesh( geometry, material );
+	scene.add(pyramid);
 }
 
 function render()
 {
 	renderer.render(scene, cameraCurrent);
+}
+
+function onDocumentMouseDown(event)
+{
+	pyramid.rotation.x += Math.PI;
+	render();
 }
 
 
