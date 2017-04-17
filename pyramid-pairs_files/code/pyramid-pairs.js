@@ -38,13 +38,17 @@ var sun;
 
 var colorOfSand = 0xedc9af;
 
-var pyramid;
+var pyramids;
 
 var pyramidToRotate;
 
 var revealing;
 
 var rotationDelta = 0.025;
+
+var raycaster;
+
+var mouse;
 
 initialize();
 
@@ -80,10 +84,15 @@ function initialize()
 	document.body.appendChild(renderer.domElement);
 
 	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+
+	raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
 }
 
 function draw()
 {
+	pyramids = [];
+
 	sun = new THREE.DirectionalLight( 0xffffff, 1 );
 	sun.position.x = -100;
 	sun.position.y = 100;
@@ -92,8 +101,9 @@ function draw()
 
 	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-	pyramid = new THREE.Mesh( geometry, material );
-	scene.add(pyramid);
+	var pyramidNew = new THREE.Mesh( geometry, material );
+	pyramids.push(pyramidNew);
+	scene.add(pyramidNew);
 }
 
 function animate()
@@ -105,14 +115,14 @@ function animate()
 
 function render()
 {
-	if (revealing && pyramid.rotation.x < (Math.PI * 1.25))
+	if (revealing && pyramids[0].rotation.x < (Math.PI * 1.25))
 	{
-		pyramid.rotation.x += rotationDelta;
+		pyramids[0].rotation.x += rotationDelta;
 	}
 
-	else if (!revealing && pyramid.rotation.x > 0)
+	else if (!revealing && pyramids[0].rotation.x > 0)
 	{
-		pyramid.rotation.x -= rotationDelta;
+		pyramids[0].rotation.x -= rotationDelta;
 	}
 
 	renderer.render(scene, cameraCurrent);
@@ -120,8 +130,16 @@ function render()
 
 function onDocumentMouseDown(event)
 {
-	pyramidToRotate = pyramid;
-	revealing = !revealing;
+	event.preventDefault();
+	mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
+	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
+	raycaster.setFromCamera( mouse, cameraCurrent );
+	var intersects = raycaster.intersectObjects( pyramids );
+	if ( intersects.length > 0 )
+	{
+		pyramidToRotate = pyramids[0];
+		revealing = !revealing;
+	}
 }
 
 
