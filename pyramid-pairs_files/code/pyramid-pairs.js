@@ -70,7 +70,7 @@ function initialize()
 
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	camera01.position.y = 30;
+	camera01.position.y = 100;
 	camera01.position.z = 100;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
@@ -89,7 +89,7 @@ function draw()
 	sun.position.y = 100;
 	sun.position.z = 100;
 	scene.add(sun);
-	
+
 	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
 	pyramid = new THREE.Mesh( geometry, material );
@@ -105,7 +105,7 @@ function animate()
 
 function render()
 {
-	if (revealing && pyramid.rotation.x < (Math.PI * 1.375))
+	if (revealing && pyramid.rotation.x < (Math.PI * 1.25))
 	{
 		pyramid.rotation.x += rotationDelta;
 	}
