@@ -11,6 +11,3 @@ As many as you like -- just alternate who clicks the pyramids and record points 
 * Find the other pyramid that has the same image to remove those pyramids.
 * Keep removing pyramids until all of the pyramids are gone.
 
-## Sources used to create Pyramid Pairs
-* https://threejs.org/examples/?q=interac#canvas_interactive_cubes
-
