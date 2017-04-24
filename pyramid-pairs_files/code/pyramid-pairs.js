@@ -46,15 +46,22 @@ var raycaster;
 
 var mouse;
 
-var pyramidToRotate;
+var pyramidSelected01;
+
+var pyramidSelected02;
 
 var revealing;
 
-awake();
+main();
 
-start();
+function main()
+{
+	awake();
 
-update();
+	start();
+
+	update();
+}
 
 function awake()
 {
@@ -128,7 +135,26 @@ function createCameras()
 
 function start()
 {
+	showStart();
+
 	createEventListeners();
+}
+
+function showStart()
+{
+	openBox();
+
+	showTitle();
+}
+
+function openBox()
+{
+
+}
+
+function showTitle()
+{
+
 }
 
 function createEventListeners()
@@ -136,7 +162,7 @@ function createEventListeners()
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
 
-	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+	document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
 
 function update()
@@ -148,17 +174,27 @@ function update()
 
 function render()
 {
-	if (revealing && pyramids[0].rotation.x < (Math.PI * 1.25))
-	{
-		pyramids[0].rotation.x += rotationDelta;
-	}
+	rotatePyramid(pyramidSelected01);
 
-	else if (!revealing && pyramids[0].rotation.x > 0)
-	{
-		pyramids[0].rotation.x -= rotationDelta;
-	}
+	rotatePyramid(pyramidSelected02);
 
 	renderer.render(scene, cameraCurrent);
+}
+
+function rotatePyramid(pyramid)
+{
+	if (pyramid != null)
+	{
+		if (revealing && pyramid.rotation.x < (Math.PI * 1.25))
+		{
+			pyramid.rotation.x += rotationDelta;
+		}
+
+		else if (!revealing && pyramid.rotation.x > 0)
+		{
+			pyramid.rotation.x -= rotationDelta;
+		}
+	}
 }
 
 function onDocumentMouseDown(event)
@@ -173,7 +209,7 @@ function onDocumentMouseDown(event)
 	var intersects = raycaster.intersectObjects(pyramids);
 	if (intersects.length > 0)
 	{
-		pyramidToRotate = pyramids[0];
+		pyramidSelected01 = pyramids[0];
 		revealing = !revealing;
 	}
 }
