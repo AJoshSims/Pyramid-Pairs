@@ -16,6 +16,8 @@ var rotationDelta = 0.025;
 
 var colorOfSand = 0xedc9af;
 
+// var colorsOfPyramidBottoms =
+
 var fieldOfView;
 
 var canvasWidth;
@@ -101,7 +103,7 @@ function createPyramids()
 
 	for (var i = -2; i < 2; ++i)
 	{
-		for (var j = -3; j < 4; ++j)
+		for (var j = -4; j < 4; ++j)
 		{
 			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 			material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
