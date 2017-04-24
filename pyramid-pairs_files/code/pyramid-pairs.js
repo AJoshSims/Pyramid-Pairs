@@ -159,8 +159,18 @@ function showTitle()
 
 function createEventListeners()
 {
+	createMouseDownListener();
+}
+
+function createMouseDownListener()
+{
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
+
+	pyramidSelected01 = null;
+	pyramidSelected02 = null;
+
+	revealing = false;
 
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
@@ -183,7 +193,7 @@ function render()
 
 function rotatePyramid(pyramid)
 {
-	if (pyramid != null)
+	if (pyramid !== null)
 	{
 		if (revealing && pyramid.rotation.x < (Math.PI * 1.25))
 		{
@@ -209,8 +219,11 @@ function onDocumentMouseDown(event)
 	var intersects = raycaster.intersectObjects(pyramids);
 	if (intersects.length > 0)
 	{
-		pyramidSelected01 = pyramids[0];
-		revealing = !revealing;
+		if (pyramidSelected01 === null)
+		{
+			pyramidSelected01 = intersects[0].object;
+			revealing = !revealing;
+		}
 	}
 }
 
