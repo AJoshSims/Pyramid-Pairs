@@ -95,19 +95,28 @@ function createPyramids()
 {
 	pyramids = [];
 
-	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-	var pyramidNew = new THREE.Mesh( geometry, material );
-	pyramids.push(pyramidNew);
+	var geometry;
+	var material;
+	var pyramid;
+	for (var i = -3; i < 4; ++i)
+	{
+		geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
+		material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
+		pyramid = new THREE.Mesh( geometry, material );
 
-	scene.add(pyramidNew);
+		pyramid.position.x = i * 25;
+
+		pyramids.push(pyramid);
+
+		scene.add(pyramid);
+	}
 }
 
 function createLights()
 {
 	sun = new THREE.DirectionalLight(0xffffff, 1);
 	sun.position.x = -100;
-	sun.position.y = 100;
+	sun.position.y = 250;
 	sun.position.z = 100;
 
 	scene.add(sun);
