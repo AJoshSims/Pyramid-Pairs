@@ -98,17 +98,22 @@ function createPyramids()
 	var geometry;
 	var material;
 	var pyramid;
-	for (var i = -3; i < 4; ++i)
+
+	for (var i = -2; i < 2; ++i)
 	{
-		geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-		material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-		pyramid = new THREE.Mesh( geometry, material );
+		for (var j = -3; j < 4; ++j)
+		{
+			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
+			material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
+			pyramid = new THREE.Mesh( geometry, material );
 
-		pyramid.position.x = i * 25;
+			pyramid.position.x = j * 25;
+			pyramid.position.z = i * 25;
 
-		pyramids.push(pyramid);
+			pyramids.push(pyramid);
 
-		scene.add(pyramid);
+			scene.add(pyramid);
+		}
 	}
 }
 
@@ -136,8 +141,8 @@ function createCameras()
 
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	camera01.position.y = 100;
-	camera01.position.z = 100;
+	camera01.position.y = 150;
+	camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
 }
