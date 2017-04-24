@@ -50,13 +50,61 @@ var raycaster;
 
 var mouse;
 
-initialize();
+awake();
 
-draw();
+start();
 
-animate();
+update();
 
-function initialize()
+function awake()
+{
+	createScene();
+
+	createBox();
+
+	createPyramids();
+
+	createLights();
+
+	createCameras();
+}
+
+function createScene()
+{
+	scene = new THREE.Scene();
+	centerOfScene = new THREE.Vector3(0, 0, 0);
+
+	renderer = new THREE.WebGLRenderer({alpha: true});
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	document.body.appendChild(renderer.domElement);
+}
+
+function createBox()
+{
+
+}
+
+function createPyramids()
+{
+	pyramids = [];
+
+	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
+	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
+	var pyramidNew = new THREE.Mesh( geometry, material );
+	pyramids.push(pyramidNew);
+	scene.add(pyramidNew);
+}
+
+function createLights()
+{
+	sun = new THREE.DirectionalLight(0xffffff, 1);
+	sun.position.x = -100;
+	sun.position.y = 100;
+	sun.position.z = 100;
+	scene.add(sun);
+}
+
+function createCameras()
 {
 	fieldOfView = 45;
 
@@ -68,47 +116,30 @@ function initialize()
 	near = 1;
 	far = 1000;
 
-	scene = new THREE.Scene();
-
-	centerOfScene = new THREE.Vector3(0, 0, 0);
-
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
 	camera01.position.y = 100;
 	camera01.position.z = 100;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
+}
 
-	renderer = new THREE.WebGLRenderer({alpha: true});
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.body.appendChild(renderer.domElement);
+function start()
+{
+	createEventListeners();
+}
 
-	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-
+function createEventListeners()
+{
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
+
+	document.addEventListener( 'mousedown', onDocumentMouseDown, false );
 }
 
-function draw()
+function update()
 {
-	pyramids = [];
-
-	sun = new THREE.DirectionalLight( 0xffffff, 1 );
-	sun.position.x = -100;
-	sun.position.y = 100;
-	sun.position.z = 100;
-	scene.add(sun);
-
-	var geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-	var pyramidNew = new THREE.Mesh( geometry, material );
-	pyramids.push(pyramidNew);
-	scene.add(pyramidNew);
-}
-
-function animate()
-{
-	requestAnimationFrame(animate);
+	requestAnimationFrame(update);
 
 	render();
 }
@@ -131,11 +162,14 @@ function render()
 function onDocumentMouseDown(event)
 {
 	event.preventDefault();
-	mouse.x = ( event.clientX / renderer.domElement.clientWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
-	raycaster.setFromCamera( mouse, cameraCurrent );
-	var intersects = raycaster.intersectObjects( pyramids );
-	if ( intersects.length > 0 )
+
+	mouse.x = ((event.clientX / renderer.domElement.clientWidth) * 2) - 1;
+	mouse.y = -((event.clientY / renderer.domElement.clientHeight) * 2) + 1;
+
+	raycaster.setFromCamera(mouse, cameraCurrent);
+
+	var intersects = raycaster.intersectObjects(pyramids);
+	if (intersects.length > 0)
 	{
 		pyramidToRotate = pyramids[0];
 		revealing = !revealing;
