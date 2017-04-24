@@ -12,6 +12,10 @@
 // TODO
 // Online multiplayer
 
+var rotationDelta = 0.025;
+
+var colorOfSand = 0xedc9af;
+
 var fieldOfView;
 
 var canvasWidth;
@@ -36,19 +40,15 @@ var renderer;
 
 var sun;
 
-var colorOfSand = 0xedc9af;
-
 var pyramids;
-
-var pyramidToRotate;
-
-var revealing;
-
-var rotationDelta = 0.025;
 
 var raycaster;
 
 var mouse;
+
+var pyramidToRotate;
+
+var revealing;
 
 awake();
 
@@ -92,6 +92,7 @@ function createPyramids()
 	var material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
 	var pyramidNew = new THREE.Mesh( geometry, material );
 	pyramids.push(pyramidNew);
+
 	scene.add(pyramidNew);
 }
 
@@ -101,6 +102,7 @@ function createLights()
 	sun.position.x = -100;
 	sun.position.y = 100;
 	sun.position.z = 100;
+
 	scene.add(sun);
 }
 
