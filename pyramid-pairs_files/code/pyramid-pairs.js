@@ -222,8 +222,15 @@ function onDocumentMouseDown(event)
 		if (pyramidSelected01 === null)
 		{
 			pyramidSelected01 = intersects[0].object;
-			revealing = !revealing;
+			revealing = true;
 		}
+
+		// else if (
+		// 	pyramidSelected02 === null && intersects[0] != pyramidSelected01)
+		// {
+		// 	pyramidSelected02 = intersects[0].object;
+		// 	revealing = true;
+		// }
 	}
 }
 
