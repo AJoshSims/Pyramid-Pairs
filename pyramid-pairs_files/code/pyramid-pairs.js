@@ -244,8 +244,19 @@ function onDocumentMouseDown(event)
 		// {
 		// 	pyramidSelected02 = intersects[0].object;
 		// 	revealing = true;
+		//
+		// 	if (checkEquality(pyramidSelected01, pyramidSelected02) == true)
+		// 	{
+		//
+		// 	}
 		// }
 	}
 }
+
+function checkEquality(pyramid01, pyramid02)
+{
+
+}
+
 
 
