@@ -16,7 +16,11 @@ var rotationDelta = 0.025;
 
 var colorOfSand = 0xedc9af;
 
-// var colorsOfPyramidBottoms =
+var colorsOfPyramidBottoms =
+	[0xffb3b3, 0x4d0000,
+	0xffb3ff, 0x4d004d,
+	0xb3ffb3, 0x004d00,
+	0xb3ffff, 0x004d4d];
 
 var fieldOfView;
 
@@ -98,16 +102,22 @@ function createPyramids()
 	pyramids = [];
 
 	var geometry;
+	var color01;
+	var color02;
 	var material;
 	var pyramid;
-
 	for (var i = -2; i < 2; ++i)
 	{
 		for (var j = -4; j < 4; ++j)
 		{
 			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-			material = new THREE.MeshLambertMaterial( {color: colorOfSand} );
-			pyramid = new THREE.Mesh( geometry, material );
+			color01 = getColorOfPyramidBottomRandom();
+			color02 = getColorOfPyramidBottomRandom();
+			geometry.faces[4].color.setHex(0x4d0000);
+			geometry.faces[5].color.setHex(0x4d0000);
+			material = new THREE.MeshLambertMaterial(
+				{vertexColors: THREE.FaceColors});
+			pyramid = new THREE.Mesh(geometry, material);
 
 			pyramid.position.x = j * 25;
 			pyramid.position.z = i * 25;
@@ -117,6 +127,14 @@ function createPyramids()
 			scene.add(pyramid);
 		}
 	}
+}
+
+function getColorOfPyramidBottomRandom()
+{
+	var randomIndex =
+		Math.floor(Math.random() * (colorsOfPyramidBottoms.length + 1));
+
+	return colorsOfPyramidBottoms[randomIndex];
 }
 
 function createLights()
