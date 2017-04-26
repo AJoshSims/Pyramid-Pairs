@@ -18,7 +18,10 @@
 // TODO
 // More pyramids (more colors or pictures)
 
-var rotationDelta = 0.025;
+// TODO
+// Actually Do: Make pyramids array an empty object
+
+var rotationDelta = 0.05;
 
 var colorOfSand = 0xedc9af;
 
@@ -66,6 +69,8 @@ var pyramidSelected02;
 
 var revealing;
 
+var checkedEquality = false;
+
 main();
 
 function main()
@@ -110,7 +115,6 @@ function createPyramids()
 	pyramids = [];
 
 	createColorsUsable();
-	console.log(colorsUsable.length);
 	colorsUsable = shuffleArray(colorsUsable);
 	console.log(colorsUsable);
 
@@ -119,9 +123,9 @@ function createPyramids()
 	var material;
 	var pyramid;
 
-	for (var i = -2; i < 1; ++i)
+	for (var i = -2; i < 2; ++i)
 	{
-		for (var j = -2; j < 4; ++j)
+		for (var j = -2; j < 3; ++j)
 		{
 			colorsToUse = colorsUsable.pop();
 
@@ -138,14 +142,19 @@ function createPyramids()
 				{vertexColors: THREE.FaceColors});
 			pyramid = new THREE.Mesh(geometry, material);
 
-			pyramid.position.x = j * 25 - 20;
-			pyramid.position.z = i * 25 + 10;
+			pyramid.position.x = j * 25;
+			pyramid.position.z = i * 25;
+			// TODO
+			// pyramid.rotation.x = Math.PI * 1.25; for cheating
+			pyramid.rotation.x = Math.PI * 1.25;
 
 			pyramids.push(pyramid);
 
 			scene.add(pyramid);
 		}
 	}
+
+	console.log(colorsUsable);
 }
 
 function createPyramid()
@@ -305,14 +314,43 @@ function rotatePyramid(pyramid)
 {
 	if (pyramid !== null)
 	{
-		if (revealing && pyramid.rotation.x < (Math.PI * 1.25))
+		if (revealing && (pyramid.rotation.x < (Math.PI * 1.25)))
 		{
 			pyramid.rotation.x += rotationDelta;
 		}
 
-		else if (!revealing && pyramid.rotation.x > 0)
+		else if (!revealing && (pyramid.rotation.x > 0))
 		{
 			pyramid.rotation.x -= rotationDelta;
+		}
+
+		else if (
+			revealing
+			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null))
+			&& ((pyramidSelected01.rotation.x >= (Math.PI * 1.25))
+			&& (pyramidSelected02.rotation.x >= (Math.PI * 1.25)))
+			&& (checkedEquality == false))
+		{
+			var equality = checkEquality(pyramidSelected01, pyramidSelected02);
+			checkedEquality = true;
+
+			if (equality === true)
+			{
+				setTimeout(function()
+				{
+					removeMatchingPyramids();
+				}, 1000);
+			}
+		}
+
+		else if (
+			!revealing
+			&& ((pyramidSelected01.rotation.x <= 0)
+			&& (pyramidSelected01.rotation.x <= 0)))
+		{
+			pyramidSelected01 = null;
+			pyramidSelected02 = null;
+			checkedEquality = false;
 		}
 	}
 }
@@ -341,25 +379,21 @@ function onDocumentMouseDown(event)
 		{
 			pyramidSelected02 = intersects[0].object;
 			reveal(pyramidSelected02);
-
-			setTimeout(function()
-			{
-				removeIfEqual(pyramidSelected01, pyramidSelected02);
-			}, 3500);
 		}
 
 		else if (
-			(intersects[0] === pyramidSelected01)
-			|| (intersects[0] === pyramidSelected02))
+			((intersects[0].object === pyramidSelected01)
+			|| (intersects[0].object === pyramidSelected02))
+			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null)))
 		{
 			conceal(pyramidSelected01);
 			conceal(pyramidSelected02);
-			pyramidSelected01 = null;
-			pyramidSelected02 = null;
 		}
 
 		else
 		{
+			console.log(pyramidSelected01);
+			console.log(pyramidSelected02);
 			// Nothing happens
 		}
 	}
@@ -375,24 +409,6 @@ function conceal(pyramid)
 	revealing = false;
 }
 
-function removeIfEqual(pyramid01, pyramid02)
-{
-	var equality = checkEquality(pyramidSelected01, pyramidSelected02);
-
-	if (equality === true)
-	{
-		remove(pyramidSelected01);
-		pyramidSelected01 = null;
-		remove(pyramidSelected02);
-		pyramidSelected02 = null;
-
-		if (pyramids.length === 0)
-		{
-			end();
-		}
-	}
-}
-
 function checkEquality(pyramid01, pyramid02)
 {
 	var equality = false;
@@ -405,12 +421,12 @@ function checkEquality(pyramid01, pyramid02)
 	var pyramid01ColorCombo =
 		pyramid01.geometry.faces[4].color.getHex() +
 		pyramid01.geometry.faces[6].color.getHex();
-	console.log("pyramid01 color: " + pyramid01.geometry.faces[4].color.getHex() + pyramid01.geometry.faces[6].color.getHex());
+	console.log("pyramid01 color: " + (pyramid01.geometry.faces[4].color.getHex() + pyramid01.geometry.faces[6].color.getHex()));
 
 	var pyramid02ColorCombo =
 		pyramid02.geometry.faces[4].color.getHex() +
 		pyramid02.geometry.faces[6].color.getHex();
-	console.log("pyramid02 color: " + pyramid02.geometry.faces[4].color.getHex() + pyramid02.geometry.faces[6].color.getHex());
+	console.log("pyramid02 color: " + (pyramid02.geometry.faces[4].color.getHex() + pyramid02.geometry.faces[6].color.getHex()));
 
 	if (pyramid01ColorCombo === pyramid02ColorCombo)
 	{
@@ -418,6 +434,21 @@ function checkEquality(pyramid01, pyramid02)
 	}
 
 	return equality;
+}
+
+function removeMatchingPyramids()
+{
+	remove(pyramidSelected01);
+	pyramidSelected01 = null;
+	remove(pyramidSelected02);
+	pyramidSelected02 = null;
+
+	checkedEquality = false;
+
+	if (pyramids.length === 0)
+	{
+		end();
+	}
 }
 
 function remove(pyramid)
