@@ -16,11 +16,11 @@ var rotationDelta = 0.025;
 
 var colorOfSand = 0xedc9af;
 
-var colorsOfPyramidBottoms =
-	[0xffb3b3, 0x4d0000,
-	0xffb3ff, 0x4d004d,
-	0xb3ffb3, 0x004d00,
-	0xb3ffff, 0x004d4d];
+var colorsForPyramidBottoms =
+	[0xffb3b3,
+	0xffb3ff,
+	0xb3ffb3,
+	0xb3ffff];
 
 var fieldOfView;
 
@@ -47,6 +47,8 @@ var renderer;
 var sun;
 
 var pyramids;
+
+var colorsUsable;
 
 var raycaster;
 
@@ -101,26 +103,44 @@ function createPyramids()
 {
 	pyramids = [];
 
+	createColorsUsable();
+	console.log(colorsUsable.length);
+	// colorsUsable = shuffleArray(colorsUsable);
+
 	var geometry;
-	var color01;
-	var color02;
+	var colorsToUse;
 	var material;
 	var pyramid;
-	for (var i = -2; i < 2; ++i)
+
+	// TODO
+	// Fix magic numbers and relationship with colorsUsable
+	for (var i = -2; i < 1; ++i)
 	{
-		for (var j = -4; j < 4; ++j)
+		for (var j = -2; j < 4; ++j)
 		{
+			console.log(colorsUsable);
+			if ((j % 2) == 0)
+			{
+				colorsToUse = colorsUsable.pop();
+			}
+
+			console.log(colorsToUse);
+
 			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-			color01 = getColorOfPyramidBottomRandom();
-			color02 = getColorOfPyramidBottomRandom();
-			geometry.faces[4].color.setHex(0x4d0000);
-			geometry.faces[5].color.setHex(0x4d0000);
+			for (var f = 0; f < 4; ++f)
+			{
+				geometry.faces[f].color.setHex(colorOfSand);
+			}
+			geometry.faces[4].color.setHex(colorsToUse["color01"]);
+			geometry.faces[5].color.setHex(colorsToUse["color01"]);
+			geometry.faces[6].color.setHex(colorsToUse["color02"]);
+			geometry.faces[7].color.setHex(colorsToUse["color02"]);
 			material = new THREE.MeshLambertMaterial(
 				{vertexColors: THREE.FaceColors});
 			pyramid = new THREE.Mesh(geometry, material);
 
-			pyramid.position.x = j * 25;
-			pyramid.position.z = i * 25;
+			pyramid.position.x = j * 25 - 20;
+			pyramid.position.z = i * 25 + 10;
 
 			pyramids.push(pyramid);
 
@@ -129,13 +149,100 @@ function createPyramids()
 	}
 }
 
-function getColorOfPyramidBottomRandom()
+function createColorsUsable()
 {
-	var randomIndex =
-		Math.floor(Math.random() * (colorsOfPyramidBottoms.length + 1));
+	colorsUsable = [];
 
-	return colorsOfPyramidBottoms[randomIndex];
+	for (var i = colorsForPyramidBottoms.length - 1; i >= 0; --i)
+	{
+		for (var j = colorsForPyramidBottoms.length - 1; j >= 0; --j)
+		{
+			colorsUsable.push(
+				{"color01" : colorsForPyramidBottoms[i],
+				"color02" : colorsForPyramidBottoms[j]});
+		}
+		colorsForPyramidBottoms.pop();
+	}
+
+	// 1 2 3 4
+	// 1
+	// 1,1 1,2 1,3 1,4
+
+	// 2 3 4
+	// 2
+	// 2,2 2,3 2,4
+
+	// 3 4
+	// 3
+	// 3,3 3,4
+
+	// 4
+	// 4
+	// 4,4
 }
+
+function shuffleArray(array) {
+	var counter = array.length;
+
+	// While there are elements in the array
+	while (counter > 0) {
+		// Pick a random index
+		var index = Math.floor(Math.random() * counter);
+
+		// Decrease counter by 1
+		counter--;
+
+		// And swap the last element with it
+		var temp = array[counter];
+		array[counter] = array[index];
+		array[index] = temp;
+	}
+
+	return array;
+}
+
+// function checkColorsUsage(color01, color02)
+// {
+// 	var colorsHaveBeenUsed = false;
+//
+// 	var colorConcatenation = concatenateColors(color01, color02);
+//
+// 	if (colorsUsed.length > 0)
+// 	{
+// 		for (var i = 0; i < colorsUsed.length; ++i)
+// 		{
+// 			if (colorsUsed[i] === colorConcatenation)
+// 			{
+// 				console.log("Does " + colorConcatenation + " match " + colorsUsed[i] + "?");
+// 				colorsHaveBeenUsed = false;
+// 			}
+// 		}
+// 	}
+//
+// 	return colorsHaveBeenUsed;
+// }
+
+// function concatenateColors(color01, color02)
+// {
+// 	var colorConcatenation;
+//
+// 	var colorGreater;
+// 	var colorLess;
+//
+// 	if (color01 <= color02)
+// 	{
+// 		colorLess = color01;
+// 		colorGreater = color02;
+// 	}
+// 	else
+// 	{
+// 		colorLess = color02;
+// 		colorGreater = color01;
+// 	}
+//
+// 	colorConcatenation = "" + colorLess + colorGreater;
+// 	return colorConcatenation;
+// }
 
 function createLights()
 {
@@ -253,11 +360,11 @@ function onDocumentMouseDown(event)
 	var intersects = raycaster.intersectObjects(pyramids);
 	if (intersects.length > 0)
 	{
-		if (pyramidSelected01 === null)
-		{
+		// if (pyramidSelected01 === null)
+		// {
 			pyramidSelected01 = intersects[0].object;
 			revealing = true;
-		}
+		// }
 
 		// else if (
 		// 	pyramidSelected02 === null && intersects[0] != pyramidSelected01)
