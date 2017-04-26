@@ -146,7 +146,6 @@ function createPyramids()
 			pyramid.position.z = i * 25;
 			// TODO
 			// pyramid.rotation.x = Math.PI * 1.25; for cheating
-			pyramid.rotation.x = Math.PI * 1.25;
 
 			pyramids.push(pyramid);
 
