@@ -12,6 +12,12 @@
 // TODO
 // Online multiplayer
 
+// TODO
+// Looser coupling
+
+// TODO
+// More pyramids (more colors or pictures)
+
 var rotationDelta = 0.025;
 
 var colorOfSand = 0xedc9af;
@@ -105,26 +111,19 @@ function createPyramids()
 
 	createColorsUsable();
 	console.log(colorsUsable.length);
-	// colorsUsable = shuffleArray(colorsUsable);
+	colorsUsable = shuffleArray(colorsUsable);
+	console.log(colorsUsable);
 
 	var geometry;
 	var colorsToUse;
 	var material;
 	var pyramid;
 
-	// TODO
-	// Fix magic numbers and relationship with colorsUsable
 	for (var i = -2; i < 1; ++i)
 	{
 		for (var j = -2; j < 4; ++j)
 		{
-			console.log(colorsUsable);
-			if ((j % 2) == 0)
-			{
-				colorsToUse = colorsUsable.pop();
-			}
-
-			console.log(colorsToUse);
+			colorsToUse = colorsUsable.pop();
 
 			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
 			for (var f = 0; f < 4; ++f)
@@ -153,13 +152,21 @@ function createColorsUsable()
 {
 	colorsUsable = [];
 
+	var colorsUsableCouple;
 	for (var i = colorsForPyramidBottoms.length - 1; i >= 0; --i)
 	{
 		for (var j = colorsForPyramidBottoms.length - 1; j >= 0; --j)
 		{
-			colorsUsable.push(
+			colorsUsableCouple =
 				{"color01" : colorsForPyramidBottoms[i],
-				"color02" : colorsForPyramidBottoms[j]});
+					"color02" : colorsForPyramidBottoms[j]};
+			for (
+				var pyramidsPerMatch = 2;
+				pyramidsPerMatch > 0;
+				--pyramidsPerMatch)
+			{
+				colorsUsable.push(colorsUsableCouple);
+			}
 		}
 		colorsForPyramidBottoms.pop();
 	}
@@ -200,49 +207,6 @@ function shuffleArray(array) {
 
 	return array;
 }
-
-// function checkColorsUsage(color01, color02)
-// {
-// 	var colorsHaveBeenUsed = false;
-//
-// 	var colorConcatenation = concatenateColors(color01, color02);
-//
-// 	if (colorsUsed.length > 0)
-// 	{
-// 		for (var i = 0; i < colorsUsed.length; ++i)
-// 		{
-// 			if (colorsUsed[i] === colorConcatenation)
-// 			{
-// 				console.log("Does " + colorConcatenation + " match " + colorsUsed[i] + "?");
-// 				colorsHaveBeenUsed = false;
-// 			}
-// 		}
-// 	}
-//
-// 	return colorsHaveBeenUsed;
-// }
-
-// function concatenateColors(color01, color02)
-// {
-// 	var colorConcatenation;
-//
-// 	var colorGreater;
-// 	var colorLess;
-//
-// 	if (color01 <= color02)
-// 	{
-// 		colorLess = color01;
-// 		colorGreater = color02;
-// 	}
-// 	else
-// 	{
-// 		colorLess = color02;
-// 		colorGreater = color01;
-// 	}
-//
-// 	colorConcatenation = "" + colorLess + colorGreater;
-// 	return colorConcatenation;
-// }
 
 function createLights()
 {
