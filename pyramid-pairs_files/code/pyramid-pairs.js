@@ -164,7 +164,7 @@ function createColorsUsable()
 		{
 			colorsUsableCouple =
 				{"color01" : colorsForPyramidBottoms[i],
-					"color02" : colorsForPyramidBottoms[j]};
+				"color02" : colorsForPyramidBottoms[j]};
 			for (
 				var pyramidsPerMatch = 2;
 				pyramidsPerMatch > 0;
@@ -382,7 +382,9 @@ function removeIfEqual(pyramid01, pyramid02)
 	if (equality === true)
 	{
 		remove(pyramidSelected01);
+		pyramidSelected01 = null;
 		remove(pyramidSelected02);
+		pyramidSelected02 = null;
 
 		if (pyramids.length === 0)
 		{
@@ -401,10 +403,14 @@ function checkEquality(pyramid01, pyramid02)
 	}
 
 	var pyramid01ColorCombo =
-		pyramid01.geometry.faces[4] + pyramid01.geometry.faces[6];
+		pyramid01.geometry.faces[4].color.getHex() +
+		pyramid01.geometry.faces[6].color.getHex();
+	console.log("pyramid01 color: " + pyramid01.geometry.faces[4].color.getHex() + pyramid01.geometry.faces[6].color.getHex());
 
 	var pyramid02ColorCombo =
-		pyramid02.geometry.faces[4] + pyramid02.geometry.faces[6];
+		pyramid02.geometry.faces[4].color.getHex() +
+		pyramid02.geometry.faces[6].color.getHex();
+	console.log("pyramid02 color: " + pyramid02.geometry.faces[4].color.getHex() + pyramid02.geometry.faces[6].color.getHex());
 
 	if (pyramid01ColorCombo === pyramid02ColorCombo)
 	{
