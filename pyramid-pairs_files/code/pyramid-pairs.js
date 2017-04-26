@@ -329,47 +329,108 @@ function onDocumentMouseDown(event)
 	var intersects = raycaster.intersectObjects(pyramids);
 	if (intersects.length > 0)
 	{
-		// if (pyramidSelected01 === null)
-		// {
+		if (pyramidSelected01 === null)
+		{
 			pyramidSelected01 = intersects[0].object;
-			revealing = true;
-		// }
+			reveal(pyramidSelected01);
+		}
 
-		// else if (
-		// 	pyramidSelected02 === null && intersects[0] != pyramidSelected01)
-		// {
-		// 	pyramidSelected02 = intersects[0].object;
-		// 	revealing = true;
-		//
-		// 	if (checkEquality(pyramidSelected01, pyramidSelected02) == true)
-		// 	{
-		//
-		// 	}
-		// }
+		else if (
+			(pyramidSelected02 === null)
+			&& (intersects[0] !== pyramidSelected01))
+		{
+			pyramidSelected02 = intersects[0].object;
+			reveal(pyramidSelected02);
+			
+			setTimeout(function()
+			{
+				removeIfEqual(pyramidSelected01, pyramidSelected02);
+			}, 3500);
+		}
+
+		else if (
+			(intersects[0] === pyramidSelected01)
+			|| (intersects[0] === pyramidSelected02))
+		{
+			conceal(pyramidSelected01);
+			conceal(pyramidSelected02);
+			pyramidSelected01 = null;
+			pyramidSelected02 = null;
+		}
+
+		else
+		{
+			// Nothing happens
+		}
 	}
 }
 
 function reveal(pyramid)
 {
-
+	revealing = true;
 }
 
 function conceal(pyramid)
 {
+	revealing = false;
+}
 
+function removeIfEqual(pyramid01, pyramid02)
+{
+	var equality = checkEquality(pyramidSelected01, pyramidSelected02);
+
+	if (equality === true)
+	{
+		remove(pyramidSelected01);
+		remove(pyramidSelected02);
+
+		if (pyramids.length === 0)
+		{
+			end();
+		}
+	}
 }
 
 function checkEquality(pyramid01, pyramid02)
 {
+	var equality = false;
 
+	if (pyramid01 === null || pyramid02 === null)
+	{
+		return null;
+	}
+
+	var pyramid01ColorCombo =
+		pyramid01.geometry.faces[4] + pyramid01.geometry.faces[6];
+
+	var pyramid02ColorCombo =
+		pyramid02.geometry.faces[4] + pyramid02.geometry.faces[6];
+
+	if (pyramid01ColorCombo === pyramid02ColorCombo)
+	{
+		equality = true;
+	}
+
+	return equality;
 }
 
 function remove(pyramid)
 {
-
+	destroy(pyramid);
+	scene.remove(pyramid);
 }
 
 function destroy(pyramid)
+{
+
+}
+
+function end()
+{
+
+}
+
+function showEnd()
 {
 
 }
