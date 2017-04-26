@@ -337,11 +337,11 @@ function onDocumentMouseDown(event)
 
 		else if (
 			(pyramidSelected02 === null)
-			&& (intersects[0] !== pyramidSelected01))
+			&& (intersects[0].object !== pyramidSelected01))
 		{
 			pyramidSelected02 = intersects[0].object;
 			reveal(pyramidSelected02);
-			
+
 			setTimeout(function()
 			{
 				removeIfEqual(pyramidSelected01, pyramidSelected02);
