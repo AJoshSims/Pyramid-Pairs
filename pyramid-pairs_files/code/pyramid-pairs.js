@@ -148,6 +148,11 @@ function createPyramids()
 	}
 }
 
+function createPyramid()
+{
+
+}
+
 function createColorsUsable()
 {
 	colorsUsable = [];
@@ -344,10 +349,29 @@ function onDocumentMouseDown(event)
 	}
 }
 
+function reveal(pyramid)
+{
+
+}
+
+function conceal(pyramid)
+{
+
+}
+
 function checkEquality(pyramid01, pyramid02)
 {
 
 }
 
+function remove(pyramid)
+{
+
+}
+
+function destroy(pyramid)
+{
+
+}
 
 
