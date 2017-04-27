@@ -109,8 +109,6 @@ function createScene()
 
 function createBox()
 {
-	var box;
-
 	box = createCuboid(60, 25, 50);
 
 	box.position.y = 15;
@@ -178,50 +176,6 @@ function createCuboid(x, y, z)
 	return cuboid;
 }
 
-//
-// /**
-//  * Creates and returns the mesh of the specified rectangle.
-//  *
-//  * @param firstX - The x coordinate of the first vertex
-//  * @param firstY - The y coordinate of the first vertex
-//  * @param firstZ - The z coordinate of the first vertex
-//  * @param secondX - The x coordinate of the second vertex
-//  * @param secondY - The y coordinate of the second vertex
-//  * @param secondZ - The z coordinate of the second vertex
-//  * @param thirdX - The x coordinate of the third vertex
-//  * @param thirdY - The y coordinate of the third vertex
-//  * @param thirdZ - The z coordinate of the third vertex
-//  * @param fourthX - The x coordinate of the fourth vertex
-//  * @param fourthY - The y coordinate of the fourth vertex
-//  * @param fourthZ - The z coordinate of the fourth vertex
-//  * @param color - The color of the rectangle
-//  *
-//  * @return The mesh of the specified rectangle
-//  */
-// function createRectangle(
-// 	firstX, firstY, firstZ,
-// 	secondX, secondY, secondZ,
-// 	thirdX, thirdY, thirdZ,
-// 	fourthX, fourthY, fourthZ,
-// 	color)
-// {
-// 	var rectangle = new THREE.Shape();
-// 	rectangle.moveTo(firstX, firstY, firstZ);
-// 	rectangle.lineTo(secondX, secondY, secondZ);
-// 	rectangle.lineTo(thirdX, thirdY, thirdZ);
-// 	rectangle.lineTo(fourthX, fourthY, fourthZ);
-// 	rectangle.lineTo(firstX, firstY, firstZ);
-//
-// 	var rectangleGeometry = new THREE.ShapeGeometry(rectangle);
-// 	var rectangleMaterial = new THREE.MeshBasicMaterial(
-// 		{color: color, transparent: true, opacity: slider.value});
-//
-// 	var rectangleMesh = new THREE.Mesh(
-// 		rectangleGeometry, rectangleMaterial);
-//
-// 	return rectangleMesh;
-// }
-
 function createPyramids()
 {
 	pyramids = [];
@@ -250,6 +204,7 @@ function createPyramids()
 			geometry.faces[5].color.setHex(colorsToUse["color01"]);
 			geometry.faces[6].color.setHex(colorsToUse["color02"]);
 			geometry.faces[7].color.setHex(colorsToUse["color02"]);
+
 			material = new THREE.MeshLambertMaterial(
 				{vertexColors: THREE.FaceColors});
 			pyramid = new THREE.Mesh(geometry, material);
@@ -382,7 +337,7 @@ function showStart()
 
 function openBox()
 {
-
+	// box.geometry.faces[0]
 }
 
 function showTitle()
