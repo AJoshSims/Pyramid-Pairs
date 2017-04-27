@@ -55,6 +55,8 @@ var renderer;
 
 var sun;
 
+var box;
+
 var pyramids;
 
 var colorsUsable;
@@ -105,10 +107,123 @@ function createScene()
 	document.body.appendChild(renderer.domElement);
 }
 
+/**
+ * Builds a turnstile door.
+ *
+ * @return the mesh of a turnstile door.
+ */
 function createBox()
 {
+	var boxGeometry = new THREE.Geometry();
 
+	var x = 70;
+	var y = 0;
+	var z = 60;
+	boxGeometry.vertices.push(
+		new THREE.Vector3(-x, y, -z),
+		new THREE.Vector3(x, y, -z),
+		new THREE.Vector3(x, -y, -z),
+		new THREE.Vector3(-x, -y, -z),
+
+		new THREE.Vector3(-x, y, z),
+		new THREE.Vector3(x, y, z),
+		new THREE.Vector3(x, -y, z),
+		new THREE.Vector3(-x, -y, z));
+
+	var vertex00 = 0;
+	var vertex01 = 1;
+	var vertex02 = 2;
+	var vertex03 = 3;
+	var vertex04 = 4;
+	var vertex05 = 5;
+	var vertex06 = 6;
+	var vertex07 = 7;
+	boxGeometry.faces.push(
+		new THREE.Face3(vertex00, vertex01, vertex02),
+		new THREE.Face3(vertex02, vertex03, vertex00),
+
+		new THREE.Face3(vertex04, vertex05, vertex06),
+		new THREE.Face3(vertex06, vertex07, vertex04),
+
+		new THREE.Face3(vertex00, vertex01, vertex05),
+		new THREE.Face3(vertex05, vertex04, vertex00),
+
+		new THREE.Face3(vertex05, vertex01, vertex02),
+		new THREE.Face3(vertex02, vertex06, vertex05),
+
+		new THREE.Face3(vertex07, vertex06, vertex02),
+		new THREE.Face3(vertex02, vertex03, vertex07),
+
+		new THREE.Face3(vertex00, vertex04, vertex07),
+		new THREE.Face3(vertex07, vertex03, vertex00));
+
+	var boxMaterial = new THREE.MeshBasicMaterial({
+		color: 0xff0000,
+		side: THREE.DoubleSide});
+
+	var box = new THREE.Mesh(
+		boxGeometry, boxMaterial);
+
+	box.position.y = -10;
+	box.position.z = -13;
+
+	scene.add(box);
 }
+
+// function createBox()
+// {
+// 	var boxSideBottom = createRectangle(
+// 		-4, 0, -4,
+// 		4, 0, -4,
+// 		4, 0, 4,
+// 		-4, 0, 4,
+// 		0xff0000);
+//
+// 	scene.add(boxSideBottom);
+// }
+//
+// /**
+//  * Creates and returns the mesh of the specified rectangle.
+//  *
+//  * @param firstX - The x coordinate of the first vertex
+//  * @param firstY - The y coordinate of the first vertex
+//  * @param firstZ - The z coordinate of the first vertex
+//  * @param secondX - The x coordinate of the second vertex
+//  * @param secondY - The y coordinate of the second vertex
+//  * @param secondZ - The z coordinate of the second vertex
+//  * @param thirdX - The x coordinate of the third vertex
+//  * @param thirdY - The y coordinate of the third vertex
+//  * @param thirdZ - The z coordinate of the third vertex
+//  * @param fourthX - The x coordinate of the fourth vertex
+//  * @param fourthY - The y coordinate of the fourth vertex
+//  * @param fourthZ - The z coordinate of the fourth vertex
+//  * @param color - The color of the rectangle
+//  *
+//  * @return The mesh of the specified rectangle
+//  */
+// function createRectangle(
+// 	firstX, firstY, firstZ,
+// 	secondX, secondY, secondZ,
+// 	thirdX, thirdY, thirdZ,
+// 	fourthX, fourthY, fourthZ,
+// 	color)
+// {
+// 	var rectangle = new THREE.Shape();
+// 	rectangle.moveTo(firstX, firstY, firstZ);
+// 	rectangle.lineTo(secondX, secondY, secondZ);
+// 	rectangle.lineTo(thirdX, thirdY, thirdZ);
+// 	rectangle.lineTo(fourthX, fourthY, fourthZ);
+// 	rectangle.lineTo(firstX, firstY, firstZ);
+//
+// 	var rectangleGeometry = new THREE.ShapeGeometry(rectangle);
+// 	var rectangleMaterial = new THREE.MeshBasicMaterial(
+// 		{color: color, transparent: true, opacity: slider.value});
+//
+// 	var rectangleMesh = new THREE.Mesh(
+// 		rectangleGeometry, rectangleMaterial);
+//
+// 	return rectangleMesh;
+// }
 
 function createPyramids()
 {
@@ -246,6 +361,8 @@ function createCameras()
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
 	camera01.position.y = 150;
+	// camera01.position.y = -4;
+	// camera01.position.z = 100;
 	camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
