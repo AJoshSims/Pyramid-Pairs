@@ -113,20 +113,17 @@ function createScene()
 
 function createBox()
 {
-	// box = new THREE.Object3D();
-	//
-	// box.scale.x = 5;
-	// box.scale.y = 5;
-	// box.scale.z = 5;
-	//
-	// box.position.y = 0;
-	// box.position.z = 0;
-	//
-	// var boxSide = createCuboid(box.scale.x, box.scale.y, box.scale.z, 0xff0000);
-	// // boxSide.position.y = -box.scale.y;
-	// box.add(boxSide);
-	//
-	// scene.add(box);
+	box = new THREE.Object3D();
+
+	box.position.x = 0;
+	box.position.y = 0;
+	box.position.z = 0;
+
+	var boxSide = createCuboid(box.scale.x, box.scale.y, box.scale.z, 0xff0000);
+	// boxSide.position.y = -box.scale.y;
+	box.add(boxSide);
+
+	scene.add(box);
 }
 
 /**
@@ -230,7 +227,7 @@ function createPyramids()
 		}
 	}
 
-	scene.add(pyramids);
+	box.add(pyramids);
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
