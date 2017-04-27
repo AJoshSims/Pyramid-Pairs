@@ -69,6 +69,10 @@ var pyramidSelected01;
 
 var pyramidSelected02;
 
+var pyramidConcealedRotationX;
+
+var pyramidRevealedRotationX;
+
 var revealing;
 
 var checkedEquality = false;
@@ -109,12 +113,20 @@ function createScene()
 
 function createBox()
 {
-	box = createCuboid(60, 25, 50);
-
-	box.position.y = 15;
-	box.position.z = -13;
-
-	scene.add(box);
+	// box = new THREE.Object3D();
+	//
+	// box.scale.x = 5;
+	// box.scale.y = 5;
+	// box.scale.z = 5;
+	//
+	// box.position.y = 0;
+	// box.position.z = 0;
+	//
+	// var boxSide = createCuboid(box.scale.x, box.scale.y, box.scale.z, 0xff0000);
+	// // boxSide.position.y = -box.scale.y;
+	// box.add(boxSide);
+	//
+	// scene.add(box);
 }
 
 /**
@@ -122,7 +134,7 @@ function createBox()
  *
  * @return the mesh of a turnstile door.
  */
-function createCuboid(x, y, z)
+function createCuboid(x, y, z, color)
 {
 	var cuboidGeometry = new THREE.Geometry();
 
@@ -167,7 +179,7 @@ function createCuboid(x, y, z)
 	cuboidGeometry.computeFaceNormals();
 
 	var cuboidMaterial = new THREE.MeshLambertMaterial({
-		color: 0xff0000,
+		color: color,
 		side: THREE.DoubleSide});
 
 	var cuboid = new THREE.Mesh(
@@ -178,7 +190,7 @@ function createCuboid(x, y, z)
 
 function createPyramids()
 {
-	pyramids = [];
+	pyramids = new THREE.Object3D();
 
 	createColorsUsable();
 	colorsUsable = shuffleArray(colorsUsable);
@@ -214,11 +226,14 @@ function createPyramids()
 			// TODO
 			// pyramid.rotation.x = Math.PI * 1.25; for cheating
 
-			pyramids.push(pyramid);
-
-			scene.add(pyramid);
+			pyramids.add(pyramid);
 		}
 	}
+
+	scene.add(pyramids);
+
+	pyramidConcealedRotationX = pyramid.rotation.x;
+	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
 
 	console.log(colorsUsable);
 }
@@ -337,7 +352,7 @@ function showStart()
 
 function openBox()
 {
-	// box.geometry.faces[0]
+
 }
 
 function showTitle()
@@ -383,12 +398,12 @@ function rotatePyramid(pyramid)
 {
 	if (pyramid !== null)
 	{
-		if (revealing && (pyramid.rotation.x < (Math.PI * 1.25)))
+		if (revealing && (pyramid.rotation.x < pyramidRevealedRotationX))
 		{
 			pyramid.rotation.x += rotationDelta;
 		}
 
-		else if (!revealing && (pyramid.rotation.x > 0))
+		else if (!revealing && (pyramid.rotation.x > pyramidConcealedRotationX))
 		{
 			pyramid.rotation.x -= rotationDelta;
 		}
@@ -396,8 +411,8 @@ function rotatePyramid(pyramid)
 		else if (
 			revealing
 			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null))
-			&& ((pyramidSelected01.rotation.x >= (Math.PI * 1.25))
-			&& (pyramidSelected02.rotation.x >= (Math.PI * 1.25)))
+			&& ((pyramidSelected01.rotation.x >= pyramidRevealedRotationX)
+			&& (pyramidSelected02.rotation.x >= pyramidRevealedRotationX))
 			&& (checkedEquality == false))
 		{
 			var equality = checkEquality(pyramidSelected01, pyramidSelected02);
@@ -414,8 +429,8 @@ function rotatePyramid(pyramid)
 
 		else if (
 			!revealing
-			&& ((pyramidSelected01.rotation.x <= 0)
-			&& (pyramidSelected01.rotation.x <= 0)))
+			&& ((pyramidSelected01.rotation.x <= pyramidConcealedRotationX)
+			&& (pyramidSelected02.rotation.x <= pyramidConcealedRotationX)))
 		{
 			pyramidSelected01 = null;
 			pyramidSelected02 = null;
@@ -433,7 +448,7 @@ function onDocumentMouseDown(event)
 
 	raycaster.setFromCamera(mouse, cameraCurrent);
 
-	var intersects = raycaster.intersectObjects(pyramids);
+	var intersects = raycaster.intersectObjects(pyramids.children);
 	if (intersects.length > 0)
 	{
 		if (pyramidSelected01 === null)
@@ -507,6 +522,8 @@ function checkEquality(pyramid01, pyramid02)
 
 function removeMatchingPyramids()
 {
+	console.log("In removeMatchingPyramids");
+
 	remove(pyramidSelected01);
 	pyramidSelected01 = null;
 	remove(pyramidSelected02);
@@ -514,7 +531,7 @@ function removeMatchingPyramids()
 
 	checkedEquality = false;
 
-	if (pyramids.length === 0)
+	if (pyramids.children.length === 0)
 	{
 		end();
 	}
@@ -523,7 +540,7 @@ function removeMatchingPyramids()
 function remove(pyramid)
 {
 	destroy(pyramid);
-	scene.remove(pyramid);
+	pyramids.remove(pyramid);
 }
 
 function destroy(pyramid)
