@@ -107,19 +107,28 @@ function createScene()
 	document.body.appendChild(renderer.domElement);
 }
 
+function createBox()
+{
+	var box;
+
+	box = createCuboid(60, 25, 50);
+
+	box.position.y = 15;
+	box.position.z = -13;
+
+	scene.add(box);
+}
+
 /**
  * Builds a turnstile door.
  *
  * @return the mesh of a turnstile door.
  */
-function createBox()
+function createCuboid(x, y, z)
 {
-	var boxGeometry = new THREE.Geometry();
+	var cuboidGeometry = new THREE.Geometry();
 
-	var x = 70;
-	var y = 0;
-	var z = 60;
-	boxGeometry.vertices.push(
+	cuboidGeometry.vertices.push(
 		new THREE.Vector3(-x, y, -z),
 		new THREE.Vector3(x, y, -z),
 		new THREE.Vector3(x, -y, -z),
@@ -138,7 +147,7 @@ function createBox()
 	var vertex05 = 5;
 	var vertex06 = 6;
 	var vertex07 = 7;
-	boxGeometry.faces.push(
+	cuboidGeometry.faces.push(
 		new THREE.Face3(vertex00, vertex01, vertex02),
 		new THREE.Face3(vertex02, vertex03, vertex00),
 
@@ -157,30 +166,18 @@ function createBox()
 		new THREE.Face3(vertex00, vertex04, vertex07),
 		new THREE.Face3(vertex07, vertex03, vertex00));
 
-	var boxMaterial = new THREE.MeshBasicMaterial({
+	cuboidGeometry.computeFaceNormals();
+
+	var cuboidMaterial = new THREE.MeshLambertMaterial({
 		color: 0xff0000,
 		side: THREE.DoubleSide});
 
-	var box = new THREE.Mesh(
-		boxGeometry, boxMaterial);
+	var cuboid = new THREE.Mesh(
+		cuboidGeometry, cuboidMaterial);
 
-	box.position.y = -10;
-	box.position.z = -13;
-
-	scene.add(box);
+	return cuboid;
 }
 
-// function createBox()
-// {
-// 	var boxSideBottom = createRectangle(
-// 		-4, 0, -4,
-// 		4, 0, -4,
-// 		4, 0, 4,
-// 		-4, 0, 4,
-// 		0xff0000);
-//
-// 	scene.add(boxSideBottom);
-// }
 //
 // /**
 //  * Creates and returns the mesh of the specified rectangle.
@@ -360,10 +357,11 @@ function createCameras()
 
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	camera01.position.y = 150;
-	// camera01.position.y = -4;
-	// camera01.position.z = 100;
+	// camera01.position.y = 100;
+	// camera01.position.x = 200;
+	camera01.position.y = 100;
 	camera01.position.z = 150;
+	// camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
 	cameraCurrent = camera01;
 }
