@@ -35,9 +35,12 @@
 // TODO
 // More pyramids (more colors or pictures)
 
+// TODO
+// Skinned mesh
+
 var rotationDelta = 0.05;
 
-var colorOfSand = 0xedc9af;
+var colorPyramidConcealed = 0xedc9af;
 
 var colorsForPyramidBottoms =
 	[0xffb3b3,
@@ -214,7 +217,6 @@ function createPyramids()
 	colorsUsable = shuffleArray(colorsUsable);
 	console.log(colorsUsable);
 
-	var geometry;
 	var colorsToUse;
 	var material;
 	var pyramid;
@@ -225,24 +227,13 @@ function createPyramids()
 		{
 			colorsToUse = colorsUsable.pop();
 
-			geometry = new THREE.CylinderGeometry(0, 10, 10, 4);
-			for (var f = 0; f < 4; ++f)
-			{
-				geometry.faces[f].color.setHex(colorOfSand);
-			}
-			geometry.faces[4].color.setHex(colorsToUse["color01"]);
-			geometry.faces[5].color.setHex(colorsToUse["color01"]);
-			geometry.faces[6].color.setHex(colorsToUse["color02"]);
-			geometry.faces[7].color.setHex(colorsToUse["color02"]);
-
-			material = new THREE.MeshLambertMaterial(
-				{vertexColors: THREE.FaceColors});
-			pyramid = new THREE.Mesh(geometry, material);
+			pyramid = new Pyramid(
+				10, 10, 4,
+				colorPyramidConcealed,
+				colorsToUse["color01"], colorsToUse["color02"]);
 
 			pyramid.position.x = j * 25;
 			pyramid.position.z = i * 25;
-			// TODO
-			// pyramid.rotation.x = Math.PI * 1.25; for cheating
 
 			pyramids.add(pyramid);
 		}
@@ -256,9 +247,37 @@ function createPyramids()
 	console.log(colorsUsable);
 }
 
-function Pyramid()
+function Pyramid(
+	radiusBottom, height, radiusSegments,
+	colorConcealed,
+	colorRevealed01, colorRevealed02)
 {
-	
+	var radiusTop = 0;
+	this.geometry = new THREE.CylinderGeometry(
+		radiusTop, radiusBottom, height, radiusSegments);
+
+	for (
+		var indexFaceNotBottom = 0;
+		indexFaceNotBottom < this.geometry.faces.length;
+		++indexFaceNotBottom)
+	{
+		this.geometry.faces[indexFaceNotBottom].color.setHex(colorConcealed);
+	}
+	var indexFaceBottom = 4;
+	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed01);
+	++indexFaceBottom;
+	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed01);
+	++indexFaceBottom;
+	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
+	++indexFaceBottom
+	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
+
+	this.material = new THREE.MeshLambertMaterial(
+		{vertexColors: THREE.FaceColors});
+
+	this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+	return this.mesh;
 }
 
 function createColorsUsable()
