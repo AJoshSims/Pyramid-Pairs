@@ -119,8 +119,12 @@ function createBox()
 	box.position.y = 0;
 	box.position.z = 0;
 
-	var boxSide = createCuboid(box.scale.x, box.scale.y, box.scale.z, 0xff0000);
-	// boxSide.position.y = -box.scale.y;
+	var boxX = 75;
+	var boxY = 22.5;
+	var boxZ = 60;
+
+	var boxSide = createCuboid(boxX, 0, boxZ, 0xff0000);
+	boxSide.position.y = - (boxY / 2);
 	box.add(boxSide);
 
 	scene.add(box);
@@ -229,6 +233,8 @@ function createPyramids()
 
 	box.add(pyramids);
 
+	pyramids.position.set(0,0,12.5);
+
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
 
@@ -325,8 +331,8 @@ function createCameras()
 	camera01 = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
 	// camera01.position.y = 100;
-	// camera01.position.x = 200;
-	camera01.position.y = 100;
+	// camera01.position.x = ;
+	camera01.position.y = 150;
 	camera01.position.z = 150;
 	// camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
