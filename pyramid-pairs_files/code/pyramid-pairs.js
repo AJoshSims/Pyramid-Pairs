@@ -18,9 +18,6 @@
 // TODO
 // More pyramids (more colors or pictures)
 
-// TODO
-// Actually Do: Make pyramids array an empty object
-
 var rotationDelta = 0.05;
 
 var colorOfSand = 0xedc9af;
@@ -55,14 +52,6 @@ var sun;
 
 var box;
 
-var boxX = 225;
-
-var boxY = 180;
-
-var boxZ = 180;
-
-var boxColor = 0x000000;
-
 var pyramids;
 
 var colorsUsable;
@@ -82,6 +71,8 @@ var pyramidRevealedRotationX;
 var revealing;
 
 var checkedEquality = false;
+
+var cheating;
 
 main();
 
@@ -343,6 +334,8 @@ function start()
 	showStart();
 
 	createEventListeners();
+
+	cheating = false;
 }
 
 function showStart()
@@ -378,6 +371,8 @@ function showTitle()
 function createEventListeners()
 {
 	createMouseDownListener();
+
+	createKeyDownListener();
 }
 
 function createMouseDownListener()
@@ -393,6 +388,11 @@ function createMouseDownListener()
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
 
+function createKeyDownListener()
+{
+	document.addEventListener("keydown", onDocumentKeyDown, false);
+}
+
 function update()
 {
 	requestAnimationFrame(update);
@@ -403,12 +403,31 @@ function update()
 
 	rotatePyramid(pyramidSelected02);
 
+	cheat();
+
 	render();
 }
 
 function render()
 {
 	renderer.render(scene, camera);
+}
+
+function cheat()
+{
+	if (
+		(cheating === true)
+		&& (pyramids.rotation.x < pyramidRevealedRotationX))
+	{
+		pyramids.rotation.x += rotationDelta;
+	}
+
+	else if (
+		(cheating === false)
+		&& (pyramids.rotation.x > pyramidConcealedRotationX))
+	{
+		pyramids.rotation.x -= rotationDelta;
+	}
 }
 
 function rotatePyramid(pyramid)
@@ -556,23 +575,15 @@ function removeMatchingPyramids()
 
 function remove(pyramid)
 {
-	destroy(pyramid);
 	pyramids.remove(pyramid);
 }
 
-function destroy(pyramid)
+function onDocumentKeyDown(event)
 {
+	var keyC = 67;
 
+	if (event.keyCode === keyC)
+	{
+		cheating = !cheating;
+	}
 }
-
-function end()
-{
-
-}
-
-function showEnd()
-{
-
-}
-
-
