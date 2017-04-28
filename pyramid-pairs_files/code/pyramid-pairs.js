@@ -258,13 +258,6 @@ function createPyramids()
 	}
 
 	scene.add(pyramids);
-	// box.add(pyramids);
-	//
-	// var centerPyramidsInBoxZ = boxZ / 4.5;
-	//
-	// var bottomOfBoxY = -boxY / 2;
-	//
-	// pyramids.position.set(0, bottomOfBoxY, centerPyramidsInBoxZ);
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
