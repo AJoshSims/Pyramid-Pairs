@@ -10,7 +10,7 @@ As many as you like -- just alternate who clicks the pyramids and record points 
 4. Memorize the image appearing on the bottom of the pyramid
 5. Find the other pyramid that has the same image to remove those pyramids
 6. Keep removing pyramids until all have been removed
-7. After all pyramids have been removed, you may restart the game by refreshing the page
+7. Restart the game by refreshing the page
 
 ## How do I cheat?
 Pressing "c" will toggle cheating mode.
