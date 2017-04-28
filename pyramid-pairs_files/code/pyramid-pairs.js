@@ -55,11 +55,11 @@ var sun;
 
 var box;
 
-var boxX = 75;
+var boxX = 225;
 
-var boxY = 22.5;
+var boxY = 180;
 
-var boxZ = 60;
+var boxZ = 180;
 
 var boxColor = 0x000000;
 
@@ -148,10 +148,6 @@ function createBox()
 	boxSide = boxSide.clone();
 	boxSide.position.z = -boxZ;
 	box.add(boxSide);
-
-	box.scale.x = 3;
-	box.scale.y = 8;
-	box.scale.z = 3;
 
 	scene.add(box);
 }
@@ -257,7 +253,7 @@ function createPyramids()
 		}
 	}
 
-	scene.add(pyramids);
+	box.add(pyramids);
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
