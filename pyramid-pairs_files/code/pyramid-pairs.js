@@ -170,11 +170,18 @@ function createCuboid(x, y, z, color)
 		new THREE.Face3(vertex00, vertex04, vertex07),
 		new THREE.Face3(vertex07, vertex03, vertex00));
 
-	cuboidGeometry.computeFaceNormals();
+	cuboidGeometry.computeVertexNormals();
 
-	var cuboidMaterial = new THREE.MeshPhongMaterial({
-		color: color,
+	var cuboidMaterial = new THREE.MeshNormalMaterial({
 		side: THREE.DoubleSide});
+
+	// var cuboidMaterial02 = new THREE.MeshBasicMaterial({
+	// 	color: 0x000000,
+	// 	side: THREE.DoubleSide});
+	//
+	// var materials = [cuboidMaterial01, cuboidMaterial02];
+	//
+	// var cuboidMaterial = new THREE.MultiMaterial(materials);
 
 	var cuboid = new THREE.Mesh(
 		cuboidGeometry, cuboidMaterial);
@@ -349,6 +356,12 @@ function enterBox()
 		if (camera.position.z > 150)
 		{
 			camera.position.z -= 2;
+			if (camera.position.z <= 150)
+			{
+				box.material = 	new THREE.MeshBasicMaterial({
+					color: 0x000000,
+					side: THREE.DoubleSide});
+			}
 		}
 
 		if (
