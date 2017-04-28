@@ -57,6 +57,12 @@ var sun;
 
 var box;
 
+var boxX = 75;
+
+var boxY = 22.5;
+
+var boxZ = 60;
+
 var pyramids;
 
 var colorsUsable;
@@ -119,13 +125,17 @@ function createBox()
 	box.position.y = 0;
 	box.position.z = 0;
 
-	var boxX = 75;
-	var boxY = 22.5;
-	var boxZ = 60;
-
 	var boxSide = createCuboid(boxX, 0, boxZ, 0xff0000);
-	boxSide.position.y = - (boxY / 2);
+	boxSide.position.y = -boxY;
 	box.add(boxSide);
+
+	// boxSide = boxSide.clone();
+	// boxSide.position.y = boxY;
+	// box.add(boxSide);
+	//
+	// boxSide = createCuboid(0, boxY, boxZ, 0xff0000);
+	// boxSide.position.x = (boxX);
+	// box.add(boxSide);
 
 	scene.add(box);
 }
@@ -233,7 +243,11 @@ function createPyramids()
 
 	box.add(pyramids);
 
-	pyramids.position.set(0,0,12.5);
+	var centerPyramidsInBoxZ = boxZ / 4.5;
+
+	var bottomOfBoxY = -boxY / 2;
+
+	pyramids.position.set(0, bottomOfBoxY, centerPyramidsInBoxZ);
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
@@ -332,7 +346,7 @@ function createCameras()
 		fieldOfView, aspectRatio, near, far);
 	// camera01.position.y = 100;
 	// camera01.position.x = ;
-	camera01.position.y = 150;
+	camera01.position.y = 100;
 	camera01.position.z = 150;
 	// camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
