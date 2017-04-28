@@ -129,13 +129,25 @@ function createBox()
 	boxSide.position.y = -boxY;
 	box.add(boxSide);
 
-	// boxSide = boxSide.clone();
-	// boxSide.position.y = boxY;
-	// box.add(boxSide);
-	//
-	// boxSide = createCuboid(0, boxY, boxZ, 0xff0000);
-	// boxSide.position.x = (boxX);
-	// box.add(boxSide);
+	boxSide = boxSide.clone();
+	boxSide.position.y = boxY;
+	box.add(boxSide);
+
+	boxSide = createCuboid(0, boxY, boxZ, 0xff0000);
+	boxSide.position.x = boxX;
+	box.add(boxSide);
+
+	boxSide = boxSide.clone();
+	boxSide.position.x = -boxX;
+	box.add(boxSide);
+
+	boxSide = createCuboid(boxX, boxY, 0, 0xff0000);
+	boxSide.position.z = boxZ;
+	box.add(boxSide);
+
+	boxSide = boxSide.clone();
+	boxSide.position.z = -boxZ;
+	box.add(boxSide);
 
 	scene.add(box);
 }
@@ -346,7 +358,7 @@ function createCameras()
 		fieldOfView, aspectRatio, near, far);
 	// camera01.position.y = 100;
 	// camera01.position.x = ;
-	camera01.position.y = 100;
+	camera01.position.y = 40;
 	camera01.position.z = 150;
 	// camera01.position.z = 150;
 	camera01.lookAt(centerOfScene);
