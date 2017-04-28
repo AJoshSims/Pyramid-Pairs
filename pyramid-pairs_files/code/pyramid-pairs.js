@@ -56,9 +56,13 @@ var pyramids;
 
 var colorsUsable;
 
+var clickables;
+
 var raycaster;
 
 var mouse;
+
+var enteringBox;
 
 var pyramidSelected01;
 
@@ -84,11 +88,7 @@ function main()
 
 	render();
 
-	setTimeout(
-		function()
-		{
-			update()
-		}, 1000);
+	update();
 }
 
 function awake()
@@ -331,41 +331,36 @@ function createCameras()
 
 function start()
 {
-	showStart();
-
 	createEventListeners();
-
-	cheating = false;
 }
 
-function showStart()
+function enterBox()
 {
-	openBox();
-
-	showTitle();
-}
-
-function openBox()
-{
-	if (camera.position.x < 0)
+	if (enteringBox === true)
 	{
-		camera.position.x += 1;
-	}
-	if (camera.position.y < 100)
-	{
-		camera.position.y += 2;
-	}
-	if (camera.position.z > 150)
-	{
-		camera.position.z -= 2;
-	}
+		if (camera.position.x < 0)
+		{
+			camera.position.x += 1;
+		}
+		if (camera.position.y < 100)
+		{
+			camera.position.y += 2;
+		}
+		if (camera.position.z > 150)
+		{
+			camera.position.z -= 2;
+		}
 
-	camera.lookAt(centerOfScene);
-}
+		if (
+			(camera.position.x >= 0) &&
+			(camera.position.y >= 100)
+			&& (camera.position.z <= 150))
+		{
+			enteringBox = false;
+		}
 
-function showTitle()
-{
-
+		camera.lookAt(centerOfScene);
+	}
 }
 
 function createEventListeners()
@@ -377,19 +372,28 @@ function createEventListeners()
 
 function createMouseDownListener()
 {
-	raycaster = new THREE.Raycaster();
-	mouse = new THREE.Vector2();
+	clickables = [];
+	for (var i = 0; i < pyramids.children.length; ++i)
+	{
+		clickables.push(pyramids.children[i]);
+	}
+	clickables.push(box);
+
+	enteringBox = false;
 
 	pyramidSelected01 = null;
 	pyramidSelected02 = null;
-
 	revealing = false;
 
+	raycaster = new THREE.Raycaster();
+	mouse = new THREE.Vector2();
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
 
 function createKeyDownListener()
 {
+	cheating = false;
+
 	document.addEventListener("keydown", onDocumentKeyDown, false);
 }
 
@@ -397,7 +401,7 @@ function update()
 {
 	requestAnimationFrame(update);
 
-	openBox();
+	enterBox();
 
 	rotatePyramid(pyramidSelected01);
 
@@ -484,26 +488,32 @@ function onDocumentMouseDown(event)
 
 	raycaster.setFromCamera(mouse, camera);
 
-	var intersects = raycaster.intersectObjects(pyramids.children);
-	if (intersects.length > 0)
+	var clicked = raycaster.intersectObjects(clickables);
+	if (clicked.length > 0)
 	{
-		if (pyramidSelected01 === null)
+		if (clicked[0].object === box)
 		{
-			pyramidSelected01 = intersects[0].object;
+			console.log("u clickd da box");
+			enteringBox = true;
+		}
+
+		else if (pyramidSelected01 === null)
+		{
+			pyramidSelected01 = clicked[0].object;
 			reveal(pyramidSelected01);
 		}
 
 		else if (
 			(pyramidSelected02 === null)
-			&& (intersects[0].object !== pyramidSelected01))
+			&& (clicked[0].object !== pyramidSelected01))
 		{
-			pyramidSelected02 = intersects[0].object;
+			pyramidSelected02 = clicked[0].object;
 			reveal(pyramidSelected02);
 		}
 
 		else if (
-			((intersects[0].object === pyramidSelected01)
-			|| (intersects[0].object === pyramidSelected02))
+			((clicked[0].object === pyramidSelected01)
+			|| (clicked[0].object === pyramidSelected02))
 			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null)))
 		{
 			conceal(pyramidSelected01);
@@ -566,11 +576,6 @@ function removeMatchingPyramids()
 	pyramidSelected02 = null;
 
 	checkedEquality = false;
-
-	if (pyramids.children.length === 0)
-	{
-		end();
-	}
 }
 
 function remove(pyramid)
