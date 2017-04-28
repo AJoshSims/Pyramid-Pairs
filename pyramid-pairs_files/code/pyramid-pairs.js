@@ -356,12 +356,6 @@ function enterBox()
 		if (camera.position.z > 150)
 		{
 			camera.position.z -= 2;
-			if (camera.position.z <= 150)
-			{
-				box.material = 	new THREE.MeshBasicMaterial({
-					color: 0x000000,
-					side: THREE.DoubleSide});
-			}
 		}
 
 		if (
@@ -506,7 +500,9 @@ function onDocumentMouseDown(event)
 	{
 		if (clicked[0].object === box)
 		{
-			console.log("u clickd da box");
+			box.material = 	new THREE.MeshBasicMaterial({
+				color: 0x000000,
+				side: THREE.DoubleSide});
 			enteringBox = true;
 		}
 
