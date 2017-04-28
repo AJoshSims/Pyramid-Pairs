@@ -38,11 +38,11 @@
 // TODO
 // Skinned mesh
 
-var rotationDelta = 0.05;
+var pyramidRotationDelta = 0.05;
 
-var colorPyramidConcealed = 0xedc9af;
+var pyramidColorConcealed = 0xedc9af;
 
-var colorsForPyramidBottoms =
+var pyramidColorRevealedPossibilities =
 	[0xffb3b3,
 	0xffb3ff,
 	0xb3ffb3,
@@ -74,7 +74,7 @@ var box;
 
 var pyramids;
 
-var colorsUsable;
+var pyramidColorsRevealedUsable;
 
 var clickables;
 
@@ -94,9 +94,9 @@ var pyramidRevealedRotationX;
 
 var revealing;
 
-var checkedEquality = false;
+var checkedEquality;
 
-var cheating;
+var revealingAll;
 
 main();
 
@@ -136,23 +136,18 @@ function createScene()
 
 function createBox()
 {
-	box = createCuboid(225, 180, 180, 0x000000);
+	box = new Cuboid(225, 180, 180, 0x000000);
 
 	box.position = centerOfScene;
 
 	scene.add(box);
 }
 
-/**
- * Builds a turnstile door.
- *
- * @return the mesh of a turnstile door.
- */
-function createCuboid(x, y, z, color)
+function Cuboid(x, y, z, color)
 {
-	var cuboidGeometry = new THREE.Geometry();
+	this.geometry = new THREE.Geometry();
 
-	cuboidGeometry.vertices.push(
+	this.geometry.vertices.push(
 		new THREE.Vector3(-x, y, -z),
 		new THREE.Vector3(x, y, -z),
 		new THREE.Vector3(x, -y, -z),
@@ -171,7 +166,7 @@ function createCuboid(x, y, z, color)
 	var vertex05 = 5;
 	var vertex06 = 6;
 	var vertex07 = 7;
-	cuboidGeometry.faces.push(
+	this.geometry.faces.push(
 		new THREE.Face3(vertex00, vertex01, vertex02),
 		new THREE.Face3(vertex02, vertex03, vertex00),
 
@@ -190,23 +185,15 @@ function createCuboid(x, y, z, color)
 		new THREE.Face3(vertex00, vertex04, vertex07),
 		new THREE.Face3(vertex07, vertex03, vertex00));
 
-	cuboidGeometry.computeVertexNormals();
+	this.geometry.computeVertexNormals();
 
-	var cuboidMaterial = new THREE.MeshNormalMaterial({
+	this.material = new THREE.MeshNormalMaterial({
 		side: THREE.DoubleSide});
 
-	// var cuboidMaterial02 = new THREE.MeshBasicMaterial({
-	// 	color: 0x000000,
-	// 	side: THREE.DoubleSide});
-	//
-	// var materials = [cuboidMaterial01, cuboidMaterial02];
-	//
-	// var cuboidMaterial = new THREE.MultiMaterial(materials);
+	this.mesh = new THREE.Mesh(
+		this.geometry, this.material);
 
-	var cuboid = new THREE.Mesh(
-		cuboidGeometry, cuboidMaterial);
-
-	return cuboid;
+	return this.mesh;
 }
 
 function createPyramids()
@@ -214,8 +201,8 @@ function createPyramids()
 	pyramids = new THREE.Object3D();
 
 	createColorsUsable();
-	colorsUsable = shuffleArray(colorsUsable);
-	console.log(colorsUsable);
+	pyramidColorsRevealedUsable = shuffleArray(pyramidColorsRevealedUsable);
+	console.log(pyramidColorsRevealedUsable);
 
 	var colorsToUse;
 	var material;
@@ -225,11 +212,11 @@ function createPyramids()
 	{
 		for (var j = -2; j < 3; ++j)
 		{
-			colorsToUse = colorsUsable.pop();
+			colorsToUse = pyramidColorsRevealedUsable.pop();
 
 			pyramid = new Pyramid(
 				10, 10, 4,
-				colorPyramidConcealed,
+				pyramidColorConcealed,
 				colorsToUse["color01"], colorsToUse["color02"]);
 
 			pyramid.position.x = j * 25;
@@ -244,7 +231,7 @@ function createPyramids()
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
 
-	console.log(colorsUsable);
+	console.log(pyramidColorsRevealedUsable);
 }
 
 function Pyramid(
@@ -269,7 +256,7 @@ function Pyramid(
 	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed01);
 	++indexFaceBottom;
 	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
-	++indexFaceBottom
+	++indexFaceBottom;
 	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
 
 	this.material = new THREE.MeshLambertMaterial(
@@ -282,25 +269,25 @@ function Pyramid(
 
 function createColorsUsable()
 {
-	colorsUsable = [];
+	pyramidColorsRevealedUsable = [];
 
 	var colorsUsableCouple;
-	for (var i = colorsForPyramidBottoms.length - 1; i >= 0; --i)
+	for (var i = pyramidColorRevealedPossibilities.length - 1; i >= 0; --i)
 	{
-		for (var j = colorsForPyramidBottoms.length - 1; j >= 0; --j)
+		for (var j = pyramidColorRevealedPossibilities.length - 1; j >= 0; --j)
 		{
 			colorsUsableCouple =
-				{"color01" : colorsForPyramidBottoms[i],
-				"color02" : colorsForPyramidBottoms[j]};
+				{"color01" : pyramidColorRevealedPossibilities[i],
+				"color02" : pyramidColorRevealedPossibilities[j]};
 			for (
 				var pyramidsPerMatch = 2;
 				pyramidsPerMatch > 0;
 				--pyramidsPerMatch)
 			{
-				colorsUsable.push(colorsUsableCouple);
+				pyramidColorsRevealedUsable.push(colorsUsableCouple);
 			}
 		}
-		colorsForPyramidBottoms.pop();
+		pyramidColorRevealedPossibilities.pop();
 	}
 
 	// 1 2 3 4
@@ -449,7 +436,7 @@ function createMouseDownListener()
 
 function createKeyDownListener()
 {
-	cheating = false;
+	revealingAll = false;
 
 	document.addEventListener("keydown", onDocumentKeyDown, false);
 }
@@ -477,17 +464,17 @@ function render()
 function cheat()
 {
 	if (
-		(cheating === true)
+		(revealingAll === true)
 		&& (pyramids.rotation.x < pyramidRevealedRotationX))
 	{
-		pyramids.rotation.x += rotationDelta;
+		pyramids.rotation.x += pyramidRotationDelta;
 	}
 
 	else if (
-		(cheating === false)
+		(revealingAll === false)
 		&& (pyramids.rotation.x > pyramidConcealedRotationX))
 	{
-		pyramids.rotation.x -= rotationDelta;
+		pyramids.rotation.x -= pyramidRotationDelta;
 	}
 }
 
@@ -497,12 +484,12 @@ function rotatePyramid(pyramid)
 	{
 		if (revealing && (pyramid.rotation.x < pyramidRevealedRotationX))
 		{
-			pyramid.rotation.x += rotationDelta;
+			pyramid.rotation.x += pyramidRotationDelta;
 		}
 
 		else if (!revealing && (pyramid.rotation.x > pyramidConcealedRotationX))
 		{
-			pyramid.rotation.x -= rotationDelta;
+			pyramid.rotation.x -= pyramidRotationDelta;
 		}
 
 		else if (
@@ -648,6 +635,6 @@ function onDocumentKeyDown(event)
 
 	if (event.keyCode === keyC)
 	{
-		cheating = !cheating;
+		revealingAll = !revealingAll;
 	}
 }
