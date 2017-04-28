@@ -47,9 +47,7 @@ var scene;
 
 var centerOfScene;
 
-var cameraCurrent;
-
-var camera01;
+var camera;
 
 var renderer;
 
@@ -62,6 +60,8 @@ var boxX = 75;
 var boxY = 22.5;
 
 var boxZ = 60;
+
+var boxColor = 0x000000;
 
 var pyramids;
 
@@ -125,7 +125,7 @@ function createBox()
 	box.position.y = 0;
 	box.position.z = 0;
 
-	var boxSide = createCuboid(boxX, 0, boxZ, 0xff0000);
+	var boxSide = createCuboid(boxX, 0, boxZ, boxColor);
 	boxSide.position.y = -boxY;
 	box.add(boxSide);
 
@@ -133,7 +133,7 @@ function createBox()
 	boxSide.position.y = boxY;
 	box.add(boxSide);
 
-	boxSide = createCuboid(0, boxY, boxZ, 0xff0000);
+	boxSide = createCuboid(0, boxY, boxZ, boxColor);
 	boxSide.position.x = boxX;
 	box.add(boxSide);
 
@@ -141,13 +141,17 @@ function createBox()
 	boxSide.position.x = -boxX;
 	box.add(boxSide);
 
-	boxSide = createCuboid(boxX, boxY, 0, 0xff0000);
+	boxSide = createCuboid(boxX, boxY, 0, boxColor);
 	boxSide.position.z = boxZ;
 	box.add(boxSide);
 
 	boxSide = boxSide.clone();
 	boxSide.position.z = -boxZ;
 	box.add(boxSide);
+
+	box.scale.x = 3;
+	box.scale.y = 8;
+	box.scale.z = 3;
 
 	scene.add(box);
 }
@@ -201,7 +205,7 @@ function createCuboid(x, y, z, color)
 
 	cuboidGeometry.computeFaceNormals();
 
-	var cuboidMaterial = new THREE.MeshLambertMaterial({
+	var cuboidMaterial = new THREE.MeshPhongMaterial({
 		color: color,
 		side: THREE.DoubleSide});
 
@@ -253,13 +257,14 @@ function createPyramids()
 		}
 	}
 
-	box.add(pyramids);
-
-	var centerPyramidsInBoxZ = boxZ / 4.5;
-
-	var bottomOfBoxY = -boxY / 2;
-
-	pyramids.position.set(0, bottomOfBoxY, centerPyramidsInBoxZ);
+	scene.add(pyramids);
+	// box.add(pyramids);
+	//
+	// var centerPyramidsInBoxZ = boxZ / 4.5;
+	//
+	// var bottomOfBoxY = -boxY / 2;
+	//
+	// pyramids.position.set(0, bottomOfBoxY, centerPyramidsInBoxZ);
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
@@ -354,15 +359,14 @@ function createCameras()
 	near = 1;
 	far = 1000;
 
-	camera01 = new THREE.PerspectiveCamera(
+	camera = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	// camera01.position.y = 100;
-	// camera01.position.x = ;
-	camera01.position.y = 40;
-	camera01.position.z = 150;
-	// camera01.position.z = 150;
-	camera01.lookAt(centerOfScene);
-	cameraCurrent = camera01;
+	// camera.position.y = 100;
+	camera.position.x = -350;
+	camera.position.y = -600;
+	camera.position.z = 600;
+	// camera.position.z = 150;
+	camera.lookAt(centerOfScene);
 }
 
 function start()
@@ -381,7 +385,20 @@ function showStart()
 
 function openBox()
 {
+	if (camera.position.x < 0)
+	{
+		camera.position.x += 1;
+	}
+	if (camera.position.y < 100)
+	{
+		camera.position.y += 2;
+	}
+	if (camera.position.z > 150)
+	{
+		camera.position.z -= 2;
+	}
 
+	camera.lookAt(centerOfScene);
 }
 
 function showTitle()
@@ -411,16 +428,18 @@ function update()
 {
 	requestAnimationFrame(update);
 
+	openBox();
+
+	rotatePyramid(pyramidSelected01);
+
+	rotatePyramid(pyramidSelected02);
+
 	render();
 }
 
 function render()
 {
-	rotatePyramid(pyramidSelected01);
-
-	rotatePyramid(pyramidSelected02);
-
-	renderer.render(scene, cameraCurrent);
+	renderer.render(scene, camera);
 }
 
 function rotatePyramid(pyramid)
@@ -475,7 +494,7 @@ function onDocumentMouseDown(event)
 	mouse.x = ((event.clientX / renderer.domElement.clientWidth) * 2) - 1;
 	mouse.y = -((event.clientY / renderer.domElement.clientHeight) * 2) + 1;
 
-	raycaster.setFromCamera(mouse, cameraCurrent);
+	raycaster.setFromCamera(mouse, camera);
 
 	var intersects = raycaster.intersectObjects(pyramids.children);
 	if (intersects.length > 0)
