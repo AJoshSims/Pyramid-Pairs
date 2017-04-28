@@ -11,7 +11,7 @@ As many as you like -- just alternate who clicks the pyramids and record points 
 	* If matching pyramids are selected, they will be removed
 	* It is only possible to select two pyramids at a time
 	* While two pyramids are selected, clicking either will deselect both
-7. Keep removing pyramids until all have been removed
+7. Remove pyramids until all have been removed
 8. Restart the game by refreshing the page
 
 ## How do I cheat?
