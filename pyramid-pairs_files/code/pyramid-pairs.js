@@ -1,5 +1,22 @@
 /**
+ * A game of pairs.
  *
+ * <p>How many players?
+ * As many as you like -- just alternate who clicks the pyramids and record
+ * points for each player in a text editor.
+
+ * <p>How do I play?
+ * 1. Open pyramid-pairs.html in a web browser
+ * 2. Click the rainbow box
+ * 3. Click pyramids to reveal their identity
+ * 	If matching pyramids are selected, they will be removed
+ * 	It is only possible to select two pyramids at a time
+ * 	While two pyramids are selected, clicking either will deselect both
+ * 4. Remove pyramids until all have been removed
+ * 5. Restart the game by refreshing the page
+ *
+ * <p>How do I cheat?
+ * Pressing "c" will toggle cheating mode.
  *
  * @author Joshua Sims
  *
@@ -328,11 +345,9 @@ function createCameras()
 
 	camera = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	// camera.position.y = 100;
 	camera.position.x = -450;
 	camera.position.y = -550;
 	camera.position.z = 500;
-	// camera.position.z = 150;
 	camera.lookAt(centerOfScene);
 }
 
@@ -372,9 +387,25 @@ function enterBox()
 
 function createEventListeners()
 {
+	createResizeListener();
+
 	createMouseDownListener();
 
 	createKeyDownListener();
+}
+
+function createResizeListener()
+{
+	window.addEventListener( 'resize', onWindowResize, false );
+}
+
+function onWindowResize()
+{
+	aspectRatio = canvasWidth / canvasHeight;
+	camera.aspect = aspectRatio;
+	camera.updateProjectionMatrix();
+
+	renderer.setSize(window.innerWidth, window.innerHeight );
 }
 
 function createMouseDownListener()
