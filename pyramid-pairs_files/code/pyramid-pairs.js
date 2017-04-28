@@ -351,9 +351,9 @@ function createCameras()
 	camera = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
 	// camera.position.y = 100;
-	camera.position.x = -350;
-	camera.position.y = -600;
-	camera.position.z = 600;
+	camera.position.x = -450;
+	camera.position.y = -550;
+	camera.position.z = 500;
 	// camera.position.z = 150;
 	camera.lookAt(centerOfScene);
 }
