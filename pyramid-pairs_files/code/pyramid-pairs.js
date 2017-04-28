@@ -91,7 +91,13 @@ function main()
 
 	start();
 
-	update();
+	render();
+
+	setTimeout(
+		function()
+		{
+			update()
+		}, 1000);
 }
 
 function awake()
