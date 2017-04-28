@@ -24,13 +24,13 @@
  */
 
 // TODO
-// Render again upon window adjustment
-
-// TODO
 // Online multiplayer
 
 // TODO
 // Looser coupling
+
+// TODO
+// Perhaps use of protoypes
 
 // TODO
 // More pyramids (more colors or pictures)
@@ -256,9 +256,9 @@ function createPyramids()
 	console.log(colorsUsable);
 }
 
-function createPyramid()
+function Pyramid()
 {
-
+	
 }
 
 function createColorsUsable()
