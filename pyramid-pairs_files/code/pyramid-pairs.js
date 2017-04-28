@@ -125,35 +125,9 @@ function createScene()
 
 function createBox()
 {
-	box = new THREE.Object3D();
+	box = createCuboid(225, 180, 180, 0x000000);
 
-	box.position.x = 0;
-	box.position.y = 0;
-	box.position.z = 0;
-
-	var boxSide = createCuboid(boxX, 0, boxZ, boxColor);
-	boxSide.position.y = -boxY;
-	box.add(boxSide);
-
-	boxSide = boxSide.clone();
-	boxSide.position.y = boxY;
-	box.add(boxSide);
-
-	boxSide = createCuboid(0, boxY, boxZ, boxColor);
-	boxSide.position.x = boxX;
-	box.add(boxSide);
-
-	boxSide = boxSide.clone();
-	boxSide.position.x = -boxX;
-	box.add(boxSide);
-
-	boxSide = createCuboid(boxX, boxY, 0, boxColor);
-	boxSide.position.z = boxZ;
-	box.add(boxSide);
-
-	boxSide = boxSide.clone();
-	boxSide.position.z = -boxZ;
-	box.add(boxSide);
+	box.position = centerOfScene;
 
 	scene.add(box);
 }
