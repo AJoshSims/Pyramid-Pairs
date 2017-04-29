@@ -160,18 +160,32 @@ var pyramidRevealedRotationX;
 var pyramidRotationDelta = 0.05;
 
 /**
- * Indicates that one of the selected 
+ * Indicates whether or not the first selected pyramid is revealing itself.
  */
 var pyramidSelected01Revealing;
 
+/**
+ * Indicates whether or not the second selected pyramid is revealing itself.
+ */
 var pyramidSelected02Revealing;
 
+/**
+ * Indicates the equality between the two selected pyramids has just been
+ * checked.
+ */
 var checkedEquality;
 
+/**
+ * Reveals all of the pyramid identities.
+ */
 var revealingAll;
 
+// The entry point for this program.
 main();
 
+/**
+ * The entry point for this program.
+ */
 function main()
 {
 	awake();
@@ -183,6 +197,9 @@ function main()
 	update();
 }
 
+/**
+ * Initialization which occurs before the user can interact with the program.
+ */
 function awake()
 {
 	createScene();
@@ -194,6 +211,9 @@ function awake()
 	createCameras();
 }
 
+/**
+ * Creates the scene.
+ */
 function createScene()
 {
 	scene = new THREE.Scene();
@@ -204,6 +224,9 @@ function createScene()
 	document.body.appendChild(renderer.domElement);
 }
 
+/**
+ * Creates the objects in the scene.
+ */
 function createSceneObjects()
 {
 	createBox();
@@ -211,6 +234,9 @@ function createSceneObjects()
 	createPyramids();
 }
 
+/**
+ * Creates the box.
+ */
 function createBox()
 {
 	box = new Cuboid(225, 180, 180, 0x000000);
@@ -220,6 +246,16 @@ function createBox()
 	scene.add(box);
 }
 
+/**
+ * Creates a cuboid.
+ *
+ * @param x - the x scale
+ * @param y - the y scale.
+ * @param z - the z scale
+ * @param color - the color
+ *
+ * @return a cuboid
+ */
 function Cuboid(x, y, z, color)
 {
 	this.geometry = new THREE.Geometry();
@@ -273,6 +309,9 @@ function Cuboid(x, y, z, color)
 	return this.mesh;
 }
 
+/**
+ * Creates the pyramids.
+ */
 function createPyramids()
 {
 	pyramids = new THREE.Object3D();
@@ -292,7 +331,7 @@ function createPyramids()
 			colorsToUse = pyramidColorsRevealedUsable.pop();
 
 			pyramid = new Pyramid(
-				10, 10, 4,
+				10, 10,
 				pyramidColorPrimary,
 				colorsToUse["color01"], colorsToUse["color02"]);
 
@@ -311,12 +350,24 @@ function createPyramids()
 	console.log(pyramidColorsRevealedUsable);
 }
 
+/**
+ * Creates a pyramid
+ *
+ * @param radiusBottom - the bottom radius
+ * @param height - the height
+ * @param colorPrimary - the color of the bottom of the pyramid
+ * @param colorRevealed01 - part of the color on the bottom of the pyramid.
+ * @param colorRevealed02 - Part of the color on the bottom of the pyramid.
+ *
+ * @return a pyramid
+ */
 function Pyramid(
-	radiusBottom, height, radiusSegments,
-	colorConcealed,
+	radiusBottom, height,
+	colorPrimary,
 	colorRevealed01, colorRevealed02)
 {
 	var radiusTop = 0;
+	var radiusSegments = 4;
 	this.geometry = new THREE.CylinderGeometry(
 		radiusTop, radiusBottom, height, radiusSegments);
 
@@ -325,7 +376,7 @@ function Pyramid(
 		faceNotBottom < this.geometry.faces.length;
 		++faceNotBottom)
 	{
-		this.geometry.faces[faceNotBottom].color.setHex(colorConcealed);
+		this.geometry.faces[faceNotBottom].color.setHex(colorPrimary);
 	}
 	var faceBottom = 4;
 	this.geometry.faces[faceBottom].color.setHex(colorRevealed01);
@@ -344,6 +395,13 @@ function Pyramid(
 	return this.mesh;
 }
 
+/**
+ * Creates and returns the color combinations which may be used for the
+ * bottoms of the pyramids.
+ *
+ * @return the color combinations which may be used for the bottoms of the
+ * pyramids
+ */
 function createPyramidColorsRevealedUsable()
 {
 	var pyramidColorsRevealedUsable = [];
@@ -379,6 +437,13 @@ function createPyramidColorsRevealedUsable()
 	return pyramidColorsRevealedUsable;
 }
 
+/**
+ * Shuffles a specified array and returns it.
+ *
+ * @param array - the array to be shuffled
+ *
+ * @return the shuffled array
+ */
 function shuffleArray(array)
 {
 	var counter = array.length;
@@ -401,6 +466,9 @@ function shuffleArray(array)
 	return array;
 }
 
+/**
+ * Creates the lights for the scene.
+ */
 function createLights()
 {
 	sun = new THREE.DirectionalLight(0xffffff, 1);
@@ -412,6 +480,9 @@ function createLights()
 	scene.add(sun);
 }
 
+/**
+ * Creates the cameras for the scene.
+ */
 function createCameras()
 {
 	fieldOfView = 45;
@@ -434,11 +505,17 @@ function createCameras()
 	camera.lookAt(centerOfScene);
 }
 
+/**
+ * Initializes the scene such that the user can then interact with the scene.
+ */
 function start()
 {
 	createEventListeners();
 }
 
+/**
+ * Moves the camera into the box which contains the pyramids.
+ */
 function enterBox()
 {
 	if (enteringBox === true)
@@ -468,6 +545,9 @@ function enterBox()
 	}
 }
 
+/**
+ * Creates the event listeners.
+ */
 function createEventListeners()
 {
 	createResizeListener();
@@ -477,11 +557,17 @@ function createEventListeners()
 	createKeyDownListener();
 }
 
+/**
+ * Creates the listener which listens to window resizing.
+ */
 function createResizeListener()
 {
 	window.addEventListener( 'resize', onWindowResize, false );
 }
 
+/**
+ * Resizes the graphics according to the window resize.
+ */
 function onWindowResize()
 {
 	aspectRatio = canvasWidth / canvasHeight;
@@ -491,6 +577,9 @@ function onWindowResize()
 	renderer.setSize(window.innerWidth, window.innerHeight );
 }
 
+/**
+ * Creates the listener which event listens for mouse clicks.
+ */
 function createMouseDownListener()
 {
 	clickables = [];
@@ -513,6 +602,12 @@ function createMouseDownListener()
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
 }
 
+/**
+ * Handles the clicking of objects, triggering any animations that should
+ * follow the clicks.
+ *
+ * @param event - the click event
+ */
 function onDocumentMouseDown(event)
 {
 	event.preventDefault();
@@ -567,6 +662,9 @@ function onDocumentMouseDown(event)
 	}
 }
 
+/**
+ * Creates the event listener which listens for key presses.
+ */
 function createKeyDownListener()
 {
 	revealingAll = false;
@@ -574,6 +672,11 @@ function createKeyDownListener()
 	document.addEventListener("keydown", onDocumentKeyDown, false);
 }
 
+/**
+ * Handles key presses, triggering any animations that should follow.
+ *
+ * @param event - the key press event
+ */
 function onDocumentKeyDown(event)
 {
 	var keyC = 67;
@@ -584,20 +687,28 @@ function onDocumentKeyDown(event)
 	}
 }
 
+/**
+ * Constantly recursively calls itself for the purpose of re-rendering the
+ * scene as animations happen.
+ */
 function update()
 {
 	requestAnimationFrame(update);
 
 	enterBox();
 
-	rotatePyramid();
+	revealConcealSelected();
 
-	revealAll();
+	revealConcealAll();
 
 	render();
 }
 
-function rotatePyramid()
+/**
+ * Reveals, conceals, or removes the selected pyramids depending on the
+ * user's interactions and the equality of the pyramids.
+ */
+function revealConcealSelected()
 {
 	if (pyramidSelected01 !== null)
 	{
@@ -632,7 +743,7 @@ function rotatePyramid()
 				pyramidSelected02.rotation.x -= pyramidRotationDelta;
 			}
 
-			else if (
+			if (
 				((pyramidSelected01Revealing === true)
 				&& (pyramidSelected02Revealing === true))
 				&& ((pyramidSelected01.rotation.x >= pyramidRevealedRotationX)
@@ -651,7 +762,7 @@ function rotatePyramid()
 				}
 			}
 
-			else if (
+			if (
 				((pyramidSelected01Revealing === false)
 				&& (pyramidSelected02Revealing === false))
 				&& ((pyramidSelected01.rotation.x <= pyramidConcealedRotationX)
@@ -665,6 +776,14 @@ function rotatePyramid()
 	}
 }
 
+/**
+ * Checks if two pyramids are equal.
+ *
+ * @param pyramid01 - the first pyramid
+ * @param pyramid02 - the second pyramid
+ *
+ * @return true if the pyramids are equal; false otherwise
+ */
 function checkEquality(pyramid01, pyramid02)
 {
 	var equality = false;
@@ -720,22 +839,23 @@ function checkEquality(pyramid01, pyramid02)
 	return equality;
 }
 
+/**
+ * Removes matching pyramids from the scene.
+ */
 function removeMatchingPyramids()
 {
-	remove(pyramidSelected01);
+	pyramids.remove(pyramidSelected01)
 	pyramidSelected01 = null;
-	remove(pyramidSelected02);
+	pyramids.remove(pyramidSelected02);
 	pyramidSelected02 = null;
 
 	checkedEquality = false;
 }
 
-function remove(pyramid)
-{
-	pyramids.remove(pyramid);
-}
-
-function revealAll()
+/**
+ * Reveals or conceals all of the remaining pyramids.
+ */
+function revealConcealAll()
 {
 	console.log(pyramidSelected01);
 	console.log(pyramidSelected02);
@@ -754,6 +874,9 @@ function revealAll()
 	}
 }
 
+/**
+ * Renders the scene.
+ */
 function render()
 {
 	renderer.render(scene, camera);
