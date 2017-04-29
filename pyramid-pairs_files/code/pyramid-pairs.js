@@ -320,8 +320,6 @@ function createPyramids()
 
 	pyramidColorsRevealedUsable = shuffleArray(pyramidColorsRevealedUsable);
 
-	console.log(pyramidColorsRevealedUsable);
-
 	var colorsToUse;
 	var pyramid;
 	for (var i = -2; i < 2; ++i)
@@ -346,8 +344,6 @@ function createPyramids()
 
 	pyramidConcealedRotationX = pyramid.rotation.x;
 	pyramidRevealedRotationX = pyramidConcealedRotationX + (Math.PI * 1.25);
-
-	console.log(pyramidColorsRevealedUsable);
 }
 
 /**
@@ -632,7 +628,6 @@ function onDocumentMouseDown(event)
 			(pyramidSelected01 === null)
 			&& (clicked[0].object !== pyramidSelected02))
 		{
-			console.log("u clickd it pyramid01!");
 			pyramidSelected01 = clicked[0].object;
 			pyramidSelected01Revealing = true;
 		}
@@ -641,7 +636,6 @@ function onDocumentMouseDown(event)
 			(pyramidSelected02 === null)
 			&& (clicked[0].object !== pyramidSelected01))
 		{
-			console.log("u clickd it pyramid02!");
 			pyramidSelected02 = clicked[0].object;
 			pyramidSelected02Revealing = true;
 		}
@@ -857,8 +851,6 @@ function removeMatchingPyramids()
  */
 function revealConcealAll()
 {
-	console.log(pyramidSelected01);
-	console.log(pyramidSelected02);
 	if (
 		(revealingAll === true)
 		&& (pyramids.rotation.x < pyramidRevealedRotationX))
