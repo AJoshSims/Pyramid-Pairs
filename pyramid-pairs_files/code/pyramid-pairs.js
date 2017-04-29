@@ -38,20 +38,19 @@
 // TODO
 // Skinned mesh
 
-var pyramidRotationDelta = 0.05;
-
-var pyramidColorConcealed = 0xedc9af;
-
-var pyramidColorRevealedPossibilities =
-	[0xffb3b3,
-	0xffb3ff,
-	0xb3ffb3,
-	0xb3ffff];
-
+/**
+ * The field of view.
+ */
 var fieldOfView;
 
+/**
+ * The width of the canvas.
+ */
 var canvasWidth;
 
+/**
+ * The height of the canvas.
+ */
 var canvasHeight;
 
 var aspectRatio;
@@ -74,7 +73,10 @@ var box;
 
 var pyramids;
 
-var pyramidColorsRevealedUsable;
+var pyramidColorConcealed = 0xedc9af;
+
+var pyramidColorRevealedPossibilities =
+	[0xffb3b3, 0xffb3ff, 0xb3ffb3, 0xb3ffff];
 
 var clickables;
 
@@ -92,7 +94,11 @@ var pyramidConcealedRotationX;
 
 var pyramidRevealedRotationX;
 
-var revealing;
+var pyramidRotationDelta = 0.05;
+
+var pyramidSelected01Revealing;
+
+var pyramidSelected02Revealing;
 
 var checkedEquality;
 
@@ -115,9 +121,7 @@ function awake()
 {
 	createScene();
 
-	createBox();
-
-	createPyramids();
+	createSceneObjects();
 
 	createLights();
 
@@ -132,6 +136,13 @@ function createScene()
 	renderer = new THREE.WebGLRenderer({alpha: true});
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.body.appendChild(renderer.domElement);
+}
+
+function createSceneObjects()
+{
+	createBox();
+
+	createPyramids();
 }
 
 function createBox()
@@ -200,14 +211,14 @@ function createPyramids()
 {
 	pyramids = new THREE.Object3D();
 
-	createColorsUsable();
+	var pyramidColorsRevealedUsable = createPyramidColorsRevealedUsable();
+
 	pyramidColorsRevealedUsable = shuffleArray(pyramidColorsRevealedUsable);
+
 	console.log(pyramidColorsRevealedUsable);
 
 	var colorsToUse;
-	var material;
 	var pyramid;
-
 	for (var i = -2; i < 2; ++i)
 	{
 		for (var j = -2; j < 3; ++j)
@@ -244,20 +255,20 @@ function Pyramid(
 		radiusTop, radiusBottom, height, radiusSegments);
 
 	for (
-		var indexFaceNotBottom = 0;
-		indexFaceNotBottom < this.geometry.faces.length;
-		++indexFaceNotBottom)
+		var faceNotBottom = 0;
+		faceNotBottom < this.geometry.faces.length;
+		++faceNotBottom)
 	{
-		this.geometry.faces[indexFaceNotBottom].color.setHex(colorConcealed);
+		this.geometry.faces[faceNotBottom].color.setHex(colorConcealed);
 	}
-	var indexFaceBottom = 4;
-	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed01);
-	++indexFaceBottom;
-	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed01);
-	++indexFaceBottom;
-	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
-	++indexFaceBottom;
-	this.geometry.faces[indexFaceBottom].color.setHex(colorRevealed02);
+	var faceBottom = 4;
+	this.geometry.faces[faceBottom].color.setHex(colorRevealed01);
+	++faceBottom;
+	this.geometry.faces[faceBottom].color.setHex(colorRevealed01);
+	++faceBottom;
+	this.geometry.faces[faceBottom].color.setHex(colorRevealed02);
+	++faceBottom;
+	this.geometry.faces[faceBottom].color.setHex(colorRevealed02);
 
 	this.material = new THREE.MeshLambertMaterial(
 		{vertexColors: THREE.FaceColors});
@@ -267,61 +278,58 @@ function Pyramid(
 	return this.mesh;
 }
 
-function createColorsUsable()
+function createPyramidColorsRevealedUsable()
 {
-	pyramidColorsRevealedUsable = [];
+	var pyramidColorsRevealedUsable = [];
 
-	var colorsUsableCouple;
-	for (var i = pyramidColorRevealedPossibilities.length - 1; i >= 0; --i)
+	var pyramidColorsRevealedUsableCouple;
+	for (
+		var color01 = pyramidColorRevealedPossibilities.length - 1;
+		color01 >= 0;
+		--color01)
 	{
-		for (var j = pyramidColorRevealedPossibilities.length - 1; j >= 0; --j)
+		for (
+			var color02 = pyramidColorRevealedPossibilities.length - 1;
+			color02 >= 0;
+			--color02)
 		{
-			colorsUsableCouple =
-				{"color01" : pyramidColorRevealedPossibilities[i],
-				"color02" : pyramidColorRevealedPossibilities[j]};
+			pyramidColorsRevealedUsableCouple =
+				{"color01" : pyramidColorRevealedPossibilities[color01],
+				"color02" : pyramidColorRevealedPossibilities[color02]};
+
 			for (
 				var pyramidsPerMatch = 2;
 				pyramidsPerMatch > 0;
 				--pyramidsPerMatch)
 			{
-				pyramidColorsRevealedUsable.push(colorsUsableCouple);
+				pyramidColorsRevealedUsable.push(
+					pyramidColorsRevealedUsableCouple);
 			}
 		}
+
 		pyramidColorRevealedPossibilities.pop();
 	}
 
-	// 1 2 3 4
-	// 1
-	// 1,1 1,2 1,3 1,4
-
-	// 2 3 4
-	// 2
-	// 2,2 2,3 2,4
-
-	// 3 4
-	// 3
-	// 3,3 3,4
-
-	// 4
-	// 4
-	// 4,4
+	return pyramidColorsRevealedUsable;
 }
 
-function shuffleArray(array) {
+function shuffleArray(array)
+{
 	var counter = array.length;
 
-	// While there are elements in the array
-	while (counter > 0) {
-		// Pick a random index
+	// While there are elements in the array.
+	while (counter > 0)
+	{
+		// Pick a random index.
 		var index = Math.floor(Math.random() * counter);
 
-		// Decrease counter by 1
+		// Decrease counter by 1.
 		counter--;
 
-		// And swap the last element with it
-		var temp = array[counter];
+		// And swap the last element with it.
+		var temporary = array[counter];
 		array[counter] = array[index];
-		array[index] = temp;
+		array[index] = temporary;
 	}
 
 	return array;
@@ -330,6 +338,7 @@ function shuffleArray(array) {
 function createLights()
 {
 	sun = new THREE.DirectionalLight(0xffffff, 1);
+
 	sun.position.x = -100;
 	sun.position.y = 250;
 	sun.position.z = 100;
@@ -351,9 +360,11 @@ function createCameras()
 
 	camera = new THREE.PerspectiveCamera(
 		fieldOfView, aspectRatio, near, far);
-	camera.position.x = -450;
-	camera.position.y = -550;
-	camera.position.z = 500;
+
+	camera.position.x = centerOfScene.x - 450;
+	camera.position.y = centerOfScene.y - 550;
+	camera.position.z = centerOfScene.z + 500;
+
 	camera.lookAt(centerOfScene);
 }
 
@@ -428,99 +439,12 @@ function createMouseDownListener()
 	pyramidSelected01 = null;
 	pyramidSelected02 = null;
 	revealing = false;
+	checkedEquality = false;
 
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
+
 	document.addEventListener('mousedown', onDocumentMouseDown, false);
-}
-
-function createKeyDownListener()
-{
-	revealingAll = false;
-
-	document.addEventListener("keydown", onDocumentKeyDown, false);
-}
-
-function update()
-{
-	requestAnimationFrame(update);
-
-	enterBox();
-
-	rotatePyramid(pyramidSelected01);
-
-	rotatePyramid(pyramidSelected02);
-
-	cheat();
-
-	render();
-}
-
-function render()
-{
-	renderer.render(scene, camera);
-}
-
-function cheat()
-{
-	if (
-		(revealingAll === true)
-		&& (pyramids.rotation.x < pyramidRevealedRotationX))
-	{
-		pyramids.rotation.x += pyramidRotationDelta;
-	}
-
-	else if (
-		(revealingAll === false)
-		&& (pyramids.rotation.x > pyramidConcealedRotationX))
-	{
-		pyramids.rotation.x -= pyramidRotationDelta;
-	}
-}
-
-function rotatePyramid(pyramid)
-{
-	if (pyramid !== null)
-	{
-		if (revealing && (pyramid.rotation.x < pyramidRevealedRotationX))
-		{
-			pyramid.rotation.x += pyramidRotationDelta;
-		}
-
-		else if (!revealing && (pyramid.rotation.x > pyramidConcealedRotationX))
-		{
-			pyramid.rotation.x -= pyramidRotationDelta;
-		}
-
-		else if (
-			revealing
-			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null))
-			&& ((pyramidSelected01.rotation.x >= pyramidRevealedRotationX)
-			&& (pyramidSelected02.rotation.x >= pyramidRevealedRotationX))
-			&& (checkedEquality == false))
-		{
-			var equality = checkEquality(pyramidSelected01, pyramidSelected02);
-			checkedEquality = true;
-
-			if (equality === true)
-			{
-				setTimeout(function()
-				{
-					removeMatchingPyramids();
-				}, 1000);
-			}
-		}
-
-		else if (
-			!revealing
-			&& ((pyramidSelected01.rotation.x <= pyramidConcealedRotationX)
-			&& (pyramidSelected02.rotation.x <= pyramidConcealedRotationX)))
-		{
-			pyramidSelected01 = null;
-			pyramidSelected02 = null;
-			checkedEquality = false;
-		}
-	}
 }
 
 function onDocumentMouseDown(event)
@@ -543,18 +467,22 @@ function onDocumentMouseDown(event)
 			enteringBox = true;
 		}
 
-		else if (pyramidSelected01 === null)
+		else if (
+			(pyramidSelected01 === null)
+			&& (clicked[0].object !== pyramidSelected02))
 		{
+			console.log("u clickd it pyramid01!");
 			pyramidSelected01 = clicked[0].object;
-			reveal(pyramidSelected01);
+			pyramidSelected01Revealing = true;
 		}
 
 		else if (
 			(pyramidSelected02 === null)
 			&& (clicked[0].object !== pyramidSelected01))
 		{
+			console.log("u clickd it pyramid02!");
 			pyramidSelected02 = clicked[0].object;
-			reveal(pyramidSelected02);
+			pyramidSelected02Revealing = true;
 		}
 
 		else if (
@@ -562,27 +490,113 @@ function onDocumentMouseDown(event)
 			|| (clicked[0].object === pyramidSelected02))
 			&& ((pyramidSelected01 !== null) && (pyramidSelected02 !== null)))
 		{
-			conceal(pyramidSelected01);
-			conceal(pyramidSelected02);
+			pyramidSelected01Revealing = false;
+			pyramidSelected02Revealing = false;
 		}
 
 		else
 		{
-			console.log(pyramidSelected01);
-			console.log(pyramidSelected02);
-			// Nothing happens
+			// Nothing happens.
 		}
 	}
 }
 
-function reveal(pyramid)
+function createKeyDownListener()
 {
-	revealing = true;
+	revealingAll = false;
+
+	document.addEventListener("keydown", onDocumentKeyDown, false);
 }
 
-function conceal(pyramid)
+function onDocumentKeyDown(event)
 {
-	revealing = false;
+	var keyC = 67;
+
+	if (event.keyCode === keyC)
+	{
+		revealingAll = !revealingAll;
+	}
+}
+
+function update()
+{
+	requestAnimationFrame(update);
+
+	enterBox();
+
+	rotatePyramid();
+
+	revealAll();
+
+	render();
+}
+
+function rotatePyramid()
+{
+	if (pyramidSelected01 !== null)
+	{
+		if (
+			(pyramidSelected01Revealing === true)
+			&& (pyramidSelected01.rotation.x < pyramidRevealedRotationX))
+		{
+			pyramidSelected01.rotation.x += pyramidRotationDelta;
+		}
+
+		if (pyramidSelected02 !== null)
+		{
+			if (
+				(pyramidSelected01Revealing === false)
+				&& (pyramidSelected01.rotation.x > pyramidConcealedRotationX))
+			{
+				pyramidSelected01.rotation.x -= pyramidRotationDelta;
+			}
+
+			if (
+				(pyramidSelected02Revealing === true)
+				&& (pyramidSelected02.rotation.x < pyramidRevealedRotationX))
+			{
+				pyramidSelected02.rotation.x += pyramidRotationDelta;
+			}
+
+
+			if (
+				(pyramidSelected02Revealing === false)
+				&& (pyramidSelected02.rotation.x > pyramidConcealedRotationX))
+			{
+				pyramidSelected02.rotation.x -= pyramidRotationDelta;
+			}
+
+			else if (
+				((pyramidSelected01Revealing === true)
+				&& (pyramidSelected02Revealing === true))
+				&& ((pyramidSelected01.rotation.x >= pyramidRevealedRotationX)
+				&& (pyramidSelected02.rotation.x >= pyramidRevealedRotationX))
+				&& (checkedEquality === false))
+			{
+				var equality = checkEquality(pyramidSelected01, pyramidSelected02);
+				checkedEquality = true;
+
+				if (equality === true)
+				{
+					setTimeout(function()
+					{
+						removeMatchingPyramids();
+					}, 1000);
+				}
+			}
+
+			else if (
+				((pyramidSelected01Revealing === false)
+				&& (pyramidSelected02Revealing === false))
+				&& ((pyramidSelected01.rotation.x <= pyramidConcealedRotationX)
+				&& (pyramidSelected02.rotation.x <= pyramidConcealedRotationX)))
+			{
+				pyramidSelected01 = null;
+				pyramidSelected02 = null;
+				checkedEquality = false;
+			}
+		}
+	}
 }
 
 function checkEquality(pyramid01, pyramid02)
@@ -594,15 +608,43 @@ function checkEquality(pyramid01, pyramid02)
 		return null;
 	}
 
+	var pyramid01ColorLesser;
+	var pyramid01ColorGreater;
+
+	if (
+		pyramid01.geometry.faces[4].color.getHex()
+		<= pyramid01.geometry.faces[6].color.getHex())
+	{
+		pyramid01ColorLesser = pyramid01.geometry.faces[4].color.getHex();
+		pyramid01ColorGreater = pyramid01.geometry.faces[6].color.getHex();
+	}
+	else
+	{
+		pyramid01ColorLesser = pyramid01.geometry.faces[6].color.getHex();
+		pyramid01ColorGreater = pyramid01.geometry.faces[4].color.getHex();
+	}
+
 	var pyramid01ColorCombo =
-		pyramid01.geometry.faces[4].color.getHex() +
-		pyramid01.geometry.faces[6].color.getHex();
-	console.log("pyramid01 color: " + (pyramid01.geometry.faces[4].color.getHex() + pyramid01.geometry.faces[6].color.getHex()));
+		"" + pyramid01ColorLesser + pyramid01ColorGreater;
+
+	var pyramid02ColorLesser;
+	var pyramid02ColorGreater;
+
+	if (
+		pyramid02.geometry.faces[4].color.getHex()
+		<= pyramid02.geometry.faces[6].color.getHex())
+	{
+		pyramid02ColorLesser = pyramid02.geometry.faces[4].color.getHex();
+		pyramid02ColorGreater = pyramid02.geometry.faces[6].color.getHex();
+	}
+	else
+	{
+		pyramid02ColorLesser = pyramid02.geometry.faces[6].color.getHex();
+		pyramid02ColorGreater = pyramid02.geometry.faces[4].color.getHex();
+	}
 
 	var pyramid02ColorCombo =
-		pyramid02.geometry.faces[4].color.getHex() +
-		pyramid02.geometry.faces[6].color.getHex();
-	console.log("pyramid02 color: " + (pyramid02.geometry.faces[4].color.getHex() + pyramid02.geometry.faces[6].color.getHex()));
+		"" + pyramid02ColorLesser + pyramid02ColorGreater;
 
 	if (pyramid01ColorCombo === pyramid02ColorCombo)
 	{
@@ -614,8 +656,6 @@ function checkEquality(pyramid01, pyramid02)
 
 function removeMatchingPyramids()
 {
-	console.log("In removeMatchingPyramids");
-
 	remove(pyramidSelected01);
 	pyramidSelected01 = null;
 	remove(pyramidSelected02);
@@ -629,12 +669,27 @@ function remove(pyramid)
 	pyramids.remove(pyramid);
 }
 
-function onDocumentKeyDown(event)
+function revealAll()
 {
-	var keyC = 67;
-
-	if (event.keyCode === keyC)
+	console.log(pyramidSelected01);
+	console.log(pyramidSelected02);
+	if (
+		(revealingAll === true)
+		&& (pyramids.rotation.x < pyramidRevealedRotationX))
 	{
-		revealingAll = !revealingAll;
+		pyramids.rotation.x += pyramidRotationDelta;
+	}
+
+	else if (
+		(revealingAll === false)
+		&& (pyramids.rotation.x > pyramidConcealedRotationX))
+	{
+		pyramids.rotation.x -= pyramidRotationDelta;
 	}
 }
+
+function render()
+{
+	renderer.render(scene, camera);
+}
+
