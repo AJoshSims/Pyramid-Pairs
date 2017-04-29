@@ -53,49 +53,115 @@ var canvasWidth;
  */
 var canvasHeight;
 
+/**
+ * The aspect ratio.
+ */
 var aspectRatio;
 
+/**
+ * Defines the near plane.
+ */
 var near;
 
+/**
+ * Defines the far plane.
+ */
 var far;
 
+/**
+ * The scene.
+ */
 var scene;
 
+/**
+ * The center of the scene.
+ */
 var centerOfScene;
 
+/**
+ * The camera.
+ */
 var camera;
 
+/**
+ * The renderer.
+ */
 var renderer;
 
+/**
+ * The single light source.
+ */
 var sun;
 
+/**
+ * The box containing the pyramids.
+ */
 var box;
 
+/**
+ * The pyramids to be matched.
+ */
 var pyramids;
 
-var pyramidColorConcealed = 0xedc9af;
+/**
+ * The primary color of the pyramid.
+ */
+var pyramidColorPrimary = 0xedc9af;
 
-var pyramidColorRevealedPossibilities =
+/**
+ * The colors which may appear on the bottom of a pyramid.
+ */
+var pyramidColorIdentityPossibilities =
 	[0xffb3b3, 0xffb3ff, 0xb3ffb3, 0xb3ffff];
 
+/**
+ * The objects which act when clicked.
+ */
 var clickables;
 
+/**
+ * Allows the mouse to correspond to the scene.
+ */
 var raycaster;
 
+/**
+ * The mouse.
+ */
 var mouse;
 
+/**
+ * Indicates that the camera is entering box which contains the pyrramids.
+ */
 var enteringBox;
 
+/**
+ * One of the selected pyramids.
+ */
 var pyramidSelected01;
 
+/**
+ * One of the selected pyramids.
+ */
 var pyramidSelected02;
 
+/**
+ * The x rotation of the pyramids when they in the concealed position.
+ */
 var pyramidConcealedRotationX;
 
+/**
+ * The x rotation of the pyramids when they in the revealed position.
+ */
 var pyramidRevealedRotationX;
 
+/**
+ * The amount by which the pyramids rotate.
+ */
 var pyramidRotationDelta = 0.05;
 
+/**
+ * Indicates that one of the selected 
+ */
 var pyramidSelected01Revealing;
 
 var pyramidSelected02Revealing;
@@ -227,7 +293,7 @@ function createPyramids()
 
 			pyramid = new Pyramid(
 				10, 10, 4,
-				pyramidColorConcealed,
+				pyramidColorPrimary,
 				colorsToUse["color01"], colorsToUse["color02"]);
 
 			pyramid.position.x = j * 25;
@@ -284,18 +350,18 @@ function createPyramidColorsRevealedUsable()
 
 	var pyramidColorsRevealedUsableCouple;
 	for (
-		var color01 = pyramidColorRevealedPossibilities.length - 1;
+		var color01 = pyramidColorIdentityPossibilities.length - 1;
 		color01 >= 0;
 		--color01)
 	{
 		for (
-			var color02 = pyramidColorRevealedPossibilities.length - 1;
+			var color02 = pyramidColorIdentityPossibilities.length - 1;
 			color02 >= 0;
 			--color02)
 		{
 			pyramidColorsRevealedUsableCouple =
-				{"color01" : pyramidColorRevealedPossibilities[color01],
-				"color02" : pyramidColorRevealedPossibilities[color02]};
+				{"color01" : pyramidColorIdentityPossibilities[color01],
+				"color02" : pyramidColorIdentityPossibilities[color02]};
 
 			for (
 				var pyramidsPerMatch = 2;
@@ -307,7 +373,7 @@ function createPyramidColorsRevealedUsable()
 			}
 		}
 
-		pyramidColorRevealedPossibilities.pop();
+		pyramidColorIdentityPossibilities.pop();
 	}
 
 	return pyramidColorsRevealedUsable;
